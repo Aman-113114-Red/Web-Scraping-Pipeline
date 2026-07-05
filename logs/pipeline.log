@@ -1,0 +1,535 @@
+2026-07-04 16:05:51 | INFO     | api.app | Flask application created
+2026-07-04 16:05:51 | INFO     | api.app | Flask application created
+2026-07-04 16:05:51 | INFO     | api.app | Flask application created
+2026-07-04 16:05:51 | INFO     | api.app | Flask application created
+2026-07-04 16:05:51 | INFO     | scraper.cleaner | Cleaned 5 / 5 records
+2026-07-04 16:05:51 | INFO     | scraper.cleaner | Cleaned 6 / 6 records
+2026-07-04 16:05:51 | INFO     | scraper.cleaner | Cleaned 1 / 1 records
+2026-07-04 16:05:51 | INFO     | scraper.cleaner | Cleaned 1 / 1 records
+2026-07-04 16:05:52 | INFO     | scraper.deduplicator | Removed 1 duplicate(s) — 2 unique records remain
+2026-07-04 16:05:52 | INFO     | scraper.deduplicator | Removed 1 duplicate(s) — 2 unique records remain
+2026-07-04 16:05:52 | WARNING  | scraper.deduplicator | Deduplicator received an empty dataset
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Fetched successfully: http://test.com [200]
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-04 16:05:52 | WARNING  | utils.retry | Attempt 1/2 for fetch failed: Network Error — retrying in 0.0s
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-04 16:05:52 | ERROR    | utils.retry | All 2 attempts for fetch exhausted. Last error: Network Error
+2026-07-04 16:05:52 | ERROR    | scraper.fetcher | Failed to fetch http://test.com after retries: Network Error
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Page 1 fetched
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Page 2 fetched
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Page 3 fetched
+2026-07-04 16:05:52 | INFO     | scraper.fetcher | Pagination complete — 3 pages fetched (0 OK, 0 failed)
+2026-07-04 16:05:52 | INFO     | scraper.books_parser | Parsed 1 books from page
+2026-07-04 16:05:52 | INFO     | scraper.quotes_parser | Parsed 1 quotes from page
+2026-07-04 16:05:52 | INFO     | storage.csv_writer | CSV exported: C:\Users\welcome\AppData\Local\Temp\pytest-of-welcome\pytest-0\test_export_csv0\test_export.csv (2 records)
+2026-07-04 16:05:52 | INFO     | storage.json_writer | JSON exported: C:\Users\welcome\AppData\Local\Temp\pytest-of-welcome\pytest-0\test_export_json0\test_export.json (1 records)
+2026-07-04 16:06:26 | INFO     | api.app | Flask application created
+2026-07-04 16:06:26 | INFO     | api.app | Flask application created
+2026-07-04 16:06:26 | INFO     | api.app | Flask application created
+2026-07-04 16:06:26 | INFO     | api.app | Flask application created
+2026-07-04 16:06:26 | INFO     | scraper.cleaner | Cleaned 5 / 5 records
+2026-07-04 16:06:26 | INFO     | scraper.cleaner | Cleaned 6 / 6 records
+2026-07-04 16:06:26 | INFO     | scraper.cleaner | Cleaned 1 / 1 records
+2026-07-04 16:06:26 | INFO     | scraper.cleaner | Cleaned 1 / 1 records
+2026-07-04 16:06:26 | INFO     | scraper.deduplicator | Removed 1 duplicate(s) — 2 unique records remain
+2026-07-04 16:06:26 | INFO     | scraper.deduplicator | Removed 1 duplicate(s) — 2 unique records remain
+2026-07-04 16:06:26 | WARNING  | scraper.deduplicator | Deduplicator received an empty dataset
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Fetched successfully: http://test.com [200]
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-04 16:06:26 | WARNING  | utils.retry | Attempt 1/2 for fetch failed: Network Error — retrying in 0.0s
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-04 16:06:26 | ERROR    | utils.retry | All 2 attempts for fetch exhausted. Last error: Network Error
+2026-07-04 16:06:26 | ERROR    | scraper.fetcher | Failed to fetch http://test.com after retries: Network Error
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Page 1 fetched
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Page 2 fetched
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Page 3 fetched
+2026-07-04 16:06:26 | INFO     | scraper.fetcher | Pagination complete — 3 pages fetched (0 OK, 0 failed)
+2026-07-04 16:06:26 | INFO     | scraper.books_parser | Parsed 1 books from page
+2026-07-04 16:06:26 | INFO     | scraper.quotes_parser | Parsed 1 quotes from page
+2026-07-04 16:06:26 | INFO     | storage.csv_writer | CSV exported: C:\Users\welcome\AppData\Local\Temp\pytest-of-welcome\pytest-1\test_export_csv0\test_export.csv (2 records)
+2026-07-04 16:06:26 | INFO     | storage.json_writer | JSON exported: C:\Users\welcome\AppData\Local\Temp\pytest-of-welcome\pytest-1\test_export_json0\test_export.json (1 records)
+2026-07-04 16:09:08 | INFO     | api.app | Flask application created
+2026-07-04 16:09:08 | INFO     | main | Starting dashboard server on http://0.0.0.0:5000
+2026-07-04 16:17:29 | INFO     | scraper.parser_loader | Loading parser module: scraper.books_parser
+2026-07-04 16:17:29 | INFO     | scraper.parser_loader | Parser loaded: Books to Scrape (https://books.toscrape.com) — columns: ['title', 'price', 'rating', 'availability', 'category', 'product_url', 'image_url']
+2026-07-04 16:17:29 | INFO     | api.routes | Starting scrape: parser=books, url=https://books.toscrape.com
+2026-07-04 16:17:29 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com
+2026-07-04 16:17:29 | WARNING  | utils.retry | Attempt 1/4 for fetch failed: HTTPSConnectionPool(host='books.toscrape.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("HTTPSConnection(host='books.toscrape.com', port=443): Failed to resolve 'books.toscrape.com' ([Errno 11001] getaddrinfo failed)")) — retrying in 2.0s
+2026-07-04 16:17:31 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com
+2026-07-04 16:17:34 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com [200]
+2026-07-04 16:17:34 | INFO     | scraper.fetcher | Page 1 fetched
+2026-07-04 16:17:35 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-2.html
+2026-07-04 16:17:36 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-2.html [200]
+2026-07-04 16:17:36 | INFO     | scraper.fetcher | Page 2 fetched
+2026-07-04 16:17:37 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-3.html
+2026-07-04 16:17:37 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-3.html [200]
+2026-07-04 16:17:38 | INFO     | scraper.fetcher | Page 3 fetched
+2026-07-04 16:17:39 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-4.html
+2026-07-04 16:17:39 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-4.html [200]
+2026-07-04 16:17:39 | INFO     | scraper.fetcher | Page 4 fetched
+2026-07-04 16:17:40 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-5.html
+2026-07-04 16:17:41 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-5.html [200]
+2026-07-04 16:17:41 | INFO     | scraper.fetcher | Page 5 fetched
+2026-07-04 16:17:42 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-6.html
+2026-07-04 16:17:43 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-6.html [200]
+2026-07-04 16:17:43 | INFO     | scraper.fetcher | Page 6 fetched
+2026-07-04 16:17:44 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-7.html
+2026-07-04 16:17:44 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-7.html [200]
+2026-07-04 16:17:44 | INFO     | scraper.fetcher | Page 7 fetched
+2026-07-04 16:17:45 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-8.html
+2026-07-04 16:17:46 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-8.html [200]
+2026-07-04 16:17:46 | INFO     | scraper.fetcher | Page 8 fetched
+2026-07-04 16:17:47 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-9.html
+2026-07-04 16:17:47 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-9.html [200]
+2026-07-04 16:17:47 | INFO     | scraper.fetcher | Page 9 fetched
+2026-07-04 16:17:48 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-10.html
+2026-07-04 16:17:49 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-10.html [200]
+2026-07-04 16:17:49 | INFO     | scraper.fetcher | Page 10 fetched
+2026-07-04 16:17:50 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-11.html
+2026-07-04 16:17:51 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-11.html [200]
+2026-07-04 16:17:51 | INFO     | scraper.fetcher | Page 11 fetched
+2026-07-04 16:17:52 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-12.html
+2026-07-04 16:17:53 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-12.html [200]
+2026-07-04 16:17:53 | INFO     | scraper.fetcher | Page 12 fetched
+2026-07-04 16:17:54 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-13.html
+2026-07-04 16:17:55 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-13.html [200]
+2026-07-04 16:17:55 | INFO     | scraper.fetcher | Page 13 fetched
+2026-07-04 16:17:56 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-14.html
+2026-07-04 16:17:56 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-14.html [200]
+2026-07-04 16:17:56 | INFO     | scraper.fetcher | Page 14 fetched
+2026-07-04 16:17:57 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-15.html
+2026-07-04 16:17:58 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-15.html [200]
+2026-07-04 16:17:58 | INFO     | scraper.fetcher | Page 15 fetched
+2026-07-04 16:17:59 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-16.html
+2026-07-04 16:18:00 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-16.html [200]
+2026-07-04 16:18:00 | INFO     | scraper.fetcher | Page 16 fetched
+2026-07-04 16:18:01 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-17.html
+2026-07-04 16:18:02 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-17.html [200]
+2026-07-04 16:18:02 | INFO     | scraper.fetcher | Page 17 fetched
+2026-07-04 16:18:03 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-18.html
+2026-07-04 16:18:04 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-18.html [200]
+2026-07-04 16:18:04 | INFO     | scraper.fetcher | Page 18 fetched
+2026-07-04 16:18:05 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-19.html
+2026-07-04 16:18:06 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-19.html [200]
+2026-07-04 16:18:06 | INFO     | scraper.fetcher | Page 19 fetched
+2026-07-04 16:18:07 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-20.html
+2026-07-04 16:18:07 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-20.html [200]
+2026-07-04 16:18:07 | INFO     | scraper.fetcher | Page 20 fetched
+2026-07-04 16:18:08 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-21.html
+2026-07-04 16:18:09 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-21.html [200]
+2026-07-04 16:18:09 | INFO     | scraper.fetcher | Page 21 fetched
+2026-07-04 16:18:10 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-22.html
+2026-07-04 16:18:11 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-22.html [200]
+2026-07-04 16:18:11 | INFO     | scraper.fetcher | Page 22 fetched
+2026-07-04 16:18:12 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-23.html
+2026-07-04 16:18:13 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-23.html [200]
+2026-07-04 16:18:13 | INFO     | scraper.fetcher | Page 23 fetched
+2026-07-04 16:18:14 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-24.html
+2026-07-04 16:18:15 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-24.html [200]
+2026-07-04 16:18:15 | INFO     | scraper.fetcher | Page 24 fetched
+2026-07-04 16:18:16 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-25.html
+2026-07-04 16:18:17 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-25.html [200]
+2026-07-04 16:18:17 | INFO     | scraper.fetcher | Page 25 fetched
+2026-07-04 16:18:18 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-26.html
+2026-07-04 16:18:18 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-26.html [200]
+2026-07-04 16:18:18 | INFO     | scraper.fetcher | Page 26 fetched
+2026-07-04 16:18:19 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-27.html
+2026-07-04 16:18:20 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-27.html [200]
+2026-07-04 16:18:20 | INFO     | scraper.fetcher | Page 27 fetched
+2026-07-04 16:18:21 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-28.html
+2026-07-04 16:18:22 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-28.html [200]
+2026-07-04 16:18:22 | INFO     | scraper.fetcher | Page 28 fetched
+2026-07-04 16:18:23 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-29.html
+2026-07-04 16:18:24 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-29.html [200]
+2026-07-04 16:18:24 | INFO     | scraper.fetcher | Page 29 fetched
+2026-07-04 16:18:25 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-30.html
+2026-07-04 16:18:26 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-30.html [200]
+2026-07-04 16:18:26 | INFO     | scraper.fetcher | Page 30 fetched
+2026-07-04 16:18:27 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-31.html
+2026-07-04 16:18:27 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-31.html [200]
+2026-07-04 16:18:28 | INFO     | scraper.fetcher | Page 31 fetched
+2026-07-04 16:18:29 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-32.html
+2026-07-04 16:18:29 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-32.html [200]
+2026-07-04 16:18:29 | INFO     | scraper.fetcher | Page 32 fetched
+2026-07-04 16:18:30 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-33.html
+2026-07-04 16:18:31 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-33.html [200]
+2026-07-04 16:18:31 | INFO     | scraper.fetcher | Page 33 fetched
+2026-07-04 16:18:32 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-34.html
+2026-07-04 16:18:33 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-34.html [200]
+2026-07-04 16:18:33 | INFO     | scraper.fetcher | Page 34 fetched
+2026-07-04 16:18:34 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-35.html
+2026-07-04 16:18:35 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-35.html [200]
+2026-07-04 16:18:35 | INFO     | scraper.fetcher | Page 35 fetched
+2026-07-04 16:18:36 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-36.html
+2026-07-04 16:18:37 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-36.html [200]
+2026-07-04 16:18:37 | INFO     | scraper.fetcher | Page 36 fetched
+2026-07-04 16:18:38 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-37.html
+2026-07-04 16:18:38 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-37.html [200]
+2026-07-04 16:18:38 | INFO     | scraper.fetcher | Page 37 fetched
+2026-07-04 16:18:39 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-38.html
+2026-07-04 16:18:40 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-38.html [200]
+2026-07-04 16:18:40 | INFO     | scraper.fetcher | Page 38 fetched
+2026-07-04 16:18:41 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-39.html
+2026-07-04 16:18:42 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-39.html [200]
+2026-07-04 16:18:42 | INFO     | scraper.fetcher | Page 39 fetched
+2026-07-04 16:18:43 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-40.html
+2026-07-04 16:18:44 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-40.html [200]
+2026-07-04 16:18:44 | INFO     | scraper.fetcher | Page 40 fetched
+2026-07-04 16:18:45 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-41.html
+2026-07-04 16:18:46 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-41.html [200]
+2026-07-04 16:18:46 | INFO     | scraper.fetcher | Page 41 fetched
+2026-07-04 16:18:47 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-42.html
+2026-07-04 16:18:48 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-42.html [200]
+2026-07-04 16:18:48 | INFO     | scraper.fetcher | Page 42 fetched
+2026-07-04 16:18:49 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-43.html
+2026-07-04 16:18:50 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-43.html [200]
+2026-07-04 16:18:50 | INFO     | scraper.fetcher | Page 43 fetched
+2026-07-04 16:18:51 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-44.html
+2026-07-04 16:18:51 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-44.html [200]
+2026-07-04 16:18:51 | INFO     | scraper.fetcher | Page 44 fetched
+2026-07-04 16:18:52 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-45.html
+2026-07-04 16:18:53 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-45.html [200]
+2026-07-04 16:18:53 | INFO     | scraper.fetcher | Page 45 fetched
+2026-07-04 16:18:54 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-46.html
+2026-07-04 16:18:55 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-46.html [200]
+2026-07-04 16:18:55 | INFO     | scraper.fetcher | Page 46 fetched
+2026-07-04 16:18:56 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-47.html
+2026-07-04 16:18:57 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-47.html [200]
+2026-07-04 16:18:57 | INFO     | scraper.fetcher | Page 47 fetched
+2026-07-04 16:18:58 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-48.html
+2026-07-04 16:18:59 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-48.html [200]
+2026-07-04 16:18:59 | INFO     | scraper.fetcher | Page 48 fetched
+2026-07-04 16:19:00 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-49.html
+2026-07-04 16:19:01 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-49.html [200]
+2026-07-04 16:19:01 | INFO     | scraper.fetcher | Page 49 fetched
+2026-07-04 16:19:02 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-50.html
+2026-07-04 16:19:02 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-50.html [200]
+2026-07-04 16:19:02 | INFO     | scraper.fetcher | Page 50 fetched
+2026-07-04 16:19:02 | INFO     | scraper.fetcher | Pagination complete — 50 pages fetched (50 OK, 0 failed)
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:03 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:04 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 16:19:05 | INFO     | api.routes | Parsed 1000 raw records from 50 pages
+2026-07-04 16:19:05 | INFO     | scraper.cleaner | Cleaned 1000 / 1000 records
+2026-07-04 16:19:05 | INFO     | scraper.deduplicator | No duplicates found in 1000 records
+2026-07-04 16:19:05 | INFO     | storage.csv_writer | CSV exported: E:\INTERNSHIP PROJECT\web-scraping-pipeline\output\books_data.csv (1000 records)
+2026-07-04 16:19:05 | INFO     | storage.json_writer | JSON exported: E:\INTERNSHIP PROJECT\web-scraping-pipeline\output\books_data.json (1000 records)
+2026-07-04 16:19:05 | INFO     | storage.db_writer | DB_URL not configured — database storage disabled
+2026-07-04 16:19:05 | SUCCESS  | api.routes | Scrape complete: 1000 records in 95.74s
+2026-07-04 16:25:56 | INFO     | api.routes | Configuration updated: ['active_parser']
+2026-07-04 16:25:56 | INFO     | scraper.parser_loader | Loading parser module: scraper.quotes_parser
+2026-07-04 16:25:56 | INFO     | scraper.parser_loader | Parser loaded: Quotes to Scrape (https://quotes.toscrape.com) — columns: ['quote', 'author', 'tags', 'author_url']
+2026-07-04 16:25:56 | INFO     | api.routes | Starting scrape: parser=quotes, url=https://quotes.toscrape.com
+2026-07-04 16:25:56 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com
+2026-07-04 16:25:58 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com [200]
+2026-07-04 16:25:58 | INFO     | scraper.fetcher | Page 1 fetched
+2026-07-04 16:25:59 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/2/
+2026-07-04 16:26:00 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/2/ [200]
+2026-07-04 16:26:00 | INFO     | scraper.fetcher | Page 2 fetched
+2026-07-04 16:26:01 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/3/
+2026-07-04 16:26:01 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/3/ [200]
+2026-07-04 16:26:01 | INFO     | scraper.fetcher | Page 3 fetched
+2026-07-04 16:26:02 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/4/
+2026-07-04 16:26:02 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/4/ [200]
+2026-07-04 16:26:02 | INFO     | scraper.fetcher | Page 4 fetched
+2026-07-04 16:26:03 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/5/
+2026-07-04 16:26:04 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/5/ [200]
+2026-07-04 16:26:04 | INFO     | scraper.fetcher | Page 5 fetched
+2026-07-04 16:26:05 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/6/
+2026-07-04 16:26:05 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/6/ [200]
+2026-07-04 16:26:05 | INFO     | scraper.fetcher | Page 6 fetched
+2026-07-04 16:26:06 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/7/
+2026-07-04 16:26:06 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/7/ [200]
+2026-07-04 16:26:06 | INFO     | scraper.fetcher | Page 7 fetched
+2026-07-04 16:26:07 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/8/
+2026-07-04 16:26:07 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/8/ [200]
+2026-07-04 16:26:07 | INFO     | scraper.fetcher | Page 8 fetched
+2026-07-04 16:26:08 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/9/
+2026-07-04 16:26:09 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/9/ [200]
+2026-07-04 16:26:09 | INFO     | scraper.fetcher | Page 9 fetched
+2026-07-04 16:26:10 | INFO     | scraper.fetcher | Fetching: https://quotes.toscrape.com/page/10/
+2026-07-04 16:26:10 | INFO     | scraper.fetcher | Fetched successfully: https://quotes.toscrape.com/page/10/ [200]
+2026-07-04 16:26:10 | INFO     | scraper.fetcher | Page 10 fetched
+2026-07-04 16:26:10 | INFO     | scraper.fetcher | Pagination complete — 10 pages fetched (10 OK, 0 failed)
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | scraper.quotes_parser | Parsed 10 quotes from page
+2026-07-04 16:26:10 | INFO     | api.routes | Parsed 100 raw records from 10 pages
+2026-07-04 16:26:10 | INFO     | scraper.cleaner | Cleaned 100 / 100 records
+2026-07-04 16:26:10 | INFO     | scraper.deduplicator | No duplicates found in 100 records
+2026-07-04 16:26:10 | INFO     | storage.csv_writer | CSV exported: E:\INTERNSHIP PROJECT\web-scraping-pipeline\output\quotes_data.csv (100 records)
+2026-07-04 16:26:10 | INFO     | storage.json_writer | JSON exported: E:\INTERNSHIP PROJECT\web-scraping-pipeline\output\quotes_data.json (100 records)
+2026-07-04 16:26:10 | INFO     | storage.db_writer | DB_URL not configured — database storage disabled
+2026-07-04 16:26:10 | SUCCESS  | api.routes | Scrape complete: 100 records in 14.27s
+2026-07-04 17:53:06 | INFO     | api.app | Flask application created
+2026-07-04 17:53:06 | INFO     | main | Starting dashboard server on http://0.0.0.0:5000
+2026-07-04 18:07:10 | INFO     | api.routes | Configuration updated: ['active_parser']
+2026-07-04 18:07:22 | INFO     | scraper.parser_loader | Loading parser module: scraper.books_parser
+2026-07-04 18:07:22 | INFO     | scraper.parser_loader | Parser loaded: Books to Scrape (https://books.toscrape.com) — columns: ['title', 'price', 'rating', 'availability', 'category', 'product_url', 'image_url']
+2026-07-04 18:07:22 | INFO     | api.routes | Starting scrape: parser=books, url=https://books.toscrape.com
+2026-07-04 18:07:23 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com
+2026-07-04 18:07:23 | WARNING  | utils.retry | Attempt 1/4 for fetch failed: HTTPSConnectionPool(host='books.toscrape.com', port=443): Max retries exceeded with url: / (Caused by NameResolutionError("HTTPSConnection(host='books.toscrape.com', port=443): Failed to resolve 'books.toscrape.com' ([Errno 11001] getaddrinfo failed)")) — retrying in 2.0s
+2026-07-04 18:07:25 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com
+2026-07-04 18:07:28 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com [200]
+2026-07-04 18:07:29 | INFO     | scraper.fetcher | Page 1 fetched
+2026-07-04 18:07:30 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-2.html
+2026-07-04 18:07:30 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-2.html [200]
+2026-07-04 18:07:31 | INFO     | scraper.fetcher | Page 2 fetched
+2026-07-04 18:07:32 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-3.html
+2026-07-04 18:07:32 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-3.html [200]
+2026-07-04 18:07:32 | INFO     | scraper.fetcher | Page 3 fetched
+2026-07-04 18:07:33 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-4.html
+2026-07-04 18:07:34 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-4.html [200]
+2026-07-04 18:07:34 | INFO     | scraper.fetcher | Page 4 fetched
+2026-07-04 18:07:35 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-5.html
+2026-07-04 18:07:36 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-5.html [200]
+2026-07-04 18:07:36 | INFO     | scraper.fetcher | Page 5 fetched
+2026-07-04 18:07:37 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-6.html
+2026-07-04 18:07:38 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-6.html [200]
+2026-07-04 18:07:38 | INFO     | scraper.fetcher | Page 6 fetched
+2026-07-04 18:07:39 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-7.html
+2026-07-04 18:07:39 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-7.html [200]
+2026-07-04 18:07:39 | INFO     | scraper.fetcher | Page 7 fetched
+2026-07-04 18:07:40 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-8.html
+2026-07-04 18:07:41 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-8.html [200]
+2026-07-04 18:07:41 | INFO     | scraper.fetcher | Page 8 fetched
+2026-07-04 18:07:42 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-9.html
+2026-07-04 18:07:42 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-9.html [200]
+2026-07-04 18:07:42 | INFO     | scraper.fetcher | Page 9 fetched
+2026-07-04 18:07:43 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-10.html
+2026-07-04 18:07:44 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-10.html [200]
+2026-07-04 18:07:44 | INFO     | scraper.fetcher | Page 10 fetched
+2026-07-04 18:07:45 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-11.html
+2026-07-04 18:07:46 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-11.html [200]
+2026-07-04 18:07:46 | INFO     | scraper.fetcher | Page 11 fetched
+2026-07-04 18:07:47 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-12.html
+2026-07-04 18:07:47 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-12.html [200]
+2026-07-04 18:07:47 | INFO     | scraper.fetcher | Page 12 fetched
+2026-07-04 18:07:48 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-13.html
+2026-07-04 18:07:49 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-13.html [200]
+2026-07-04 18:07:49 | INFO     | scraper.fetcher | Page 13 fetched
+2026-07-04 18:07:50 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-14.html
+2026-07-04 18:07:50 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-14.html [200]
+2026-07-04 18:07:50 | INFO     | scraper.fetcher | Page 14 fetched
+2026-07-04 18:07:51 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-15.html
+2026-07-04 18:07:52 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-15.html [200]
+2026-07-04 18:07:52 | INFO     | scraper.fetcher | Page 15 fetched
+2026-07-04 18:07:53 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-16.html
+2026-07-04 18:07:53 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-16.html [200]
+2026-07-04 18:07:54 | INFO     | scraper.fetcher | Page 16 fetched
+2026-07-04 18:07:55 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-17.html
+2026-07-04 18:07:55 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-17.html [200]
+2026-07-04 18:07:55 | INFO     | scraper.fetcher | Page 17 fetched
+2026-07-04 18:07:56 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-18.html
+2026-07-04 18:07:57 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-18.html [200]
+2026-07-04 18:07:57 | INFO     | scraper.fetcher | Page 18 fetched
+2026-07-04 18:07:58 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-19.html
+2026-07-04 18:07:59 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-19.html [200]
+2026-07-04 18:07:59 | INFO     | scraper.fetcher | Page 19 fetched
+2026-07-04 18:08:00 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-20.html
+2026-07-04 18:08:01 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-20.html [200]
+2026-07-04 18:08:01 | INFO     | scraper.fetcher | Page 20 fetched
+2026-07-04 18:08:02 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-21.html
+2026-07-04 18:08:03 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-21.html [200]
+2026-07-04 18:08:03 | INFO     | scraper.fetcher | Page 21 fetched
+2026-07-04 18:08:04 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-22.html
+2026-07-04 18:08:05 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-22.html [200]
+2026-07-04 18:08:05 | INFO     | scraper.fetcher | Page 22 fetched
+2026-07-04 18:08:06 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-23.html
+2026-07-04 18:08:06 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-23.html [200]
+2026-07-04 18:08:06 | INFO     | scraper.fetcher | Page 23 fetched
+2026-07-04 18:08:07 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-24.html
+2026-07-04 18:08:08 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-24.html [200]
+2026-07-04 18:08:08 | INFO     | scraper.fetcher | Page 24 fetched
+2026-07-04 18:08:09 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-25.html
+2026-07-04 18:08:10 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-25.html [200]
+2026-07-04 18:08:10 | INFO     | scraper.fetcher | Page 25 fetched
+2026-07-04 18:08:11 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-26.html
+2026-07-04 18:08:12 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-26.html [200]
+2026-07-04 18:08:12 | INFO     | scraper.fetcher | Page 26 fetched
+2026-07-04 18:08:13 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-27.html
+2026-07-04 18:08:14 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-27.html [200]
+2026-07-04 18:08:14 | INFO     | scraper.fetcher | Page 27 fetched
+2026-07-04 18:08:15 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-28.html
+2026-07-04 18:08:15 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-28.html [200]
+2026-07-04 18:08:15 | INFO     | scraper.fetcher | Page 28 fetched
+2026-07-04 18:08:16 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-29.html
+2026-07-04 18:08:17 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-29.html [200]
+2026-07-04 18:08:17 | INFO     | scraper.fetcher | Page 29 fetched
+2026-07-04 18:08:18 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-30.html
+2026-07-04 18:08:19 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-30.html [200]
+2026-07-04 18:08:19 | INFO     | scraper.fetcher | Page 30 fetched
+2026-07-04 18:08:20 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-31.html
+2026-07-04 18:08:21 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-31.html [200]
+2026-07-04 18:08:21 | INFO     | scraper.fetcher | Page 31 fetched
+2026-07-04 18:08:22 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-32.html
+2026-07-04 18:08:23 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-32.html [200]
+2026-07-04 18:08:23 | INFO     | scraper.fetcher | Page 32 fetched
+2026-07-04 18:08:24 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-33.html
+2026-07-04 18:08:25 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-33.html [200]
+2026-07-04 18:08:25 | INFO     | scraper.fetcher | Page 33 fetched
+2026-07-04 18:08:26 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-34.html
+2026-07-04 18:08:27 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-34.html [200]
+2026-07-04 18:08:27 | INFO     | scraper.fetcher | Page 34 fetched
+2026-07-04 18:08:28 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-35.html
+2026-07-04 18:08:28 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-35.html [200]
+2026-07-04 18:08:28 | INFO     | scraper.fetcher | Page 35 fetched
+2026-07-04 18:08:29 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-36.html
+2026-07-04 18:08:30 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-36.html [200]
+2026-07-04 18:08:30 | INFO     | scraper.fetcher | Page 36 fetched
+2026-07-04 18:08:31 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-37.html
+2026-07-04 18:08:32 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-37.html [200]
+2026-07-04 18:08:32 | INFO     | scraper.fetcher | Page 37 fetched
+2026-07-04 18:08:33 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-38.html
+2026-07-04 18:08:34 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-38.html [200]
+2026-07-04 18:08:34 | INFO     | scraper.fetcher | Page 38 fetched
+2026-07-04 18:08:35 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-39.html
+2026-07-04 18:08:36 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-39.html [200]
+2026-07-04 18:08:36 | INFO     | scraper.fetcher | Page 39 fetched
+2026-07-04 18:08:37 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-40.html
+2026-07-04 18:08:38 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-40.html [200]
+2026-07-04 18:08:38 | INFO     | scraper.fetcher | Page 40 fetched
+2026-07-04 18:08:39 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-41.html
+2026-07-04 18:08:39 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-41.html [200]
+2026-07-04 18:08:39 | INFO     | scraper.fetcher | Page 41 fetched
+2026-07-04 18:08:40 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-42.html
+2026-07-04 18:08:41 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-42.html [200]
+2026-07-04 18:08:41 | INFO     | scraper.fetcher | Page 42 fetched
+2026-07-04 18:08:42 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-43.html
+2026-07-04 18:08:43 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-43.html [200]
+2026-07-04 18:08:43 | INFO     | scraper.fetcher | Page 43 fetched
+2026-07-04 18:08:44 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-44.html
+2026-07-04 18:08:45 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-44.html [200]
+2026-07-04 18:08:45 | INFO     | scraper.fetcher | Page 44 fetched
+2026-07-04 18:08:46 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-45.html
+2026-07-04 18:08:47 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-45.html [200]
+2026-07-04 18:08:47 | INFO     | scraper.fetcher | Page 45 fetched
+2026-07-04 18:08:48 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-46.html
+2026-07-04 18:08:49 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-46.html [200]
+2026-07-04 18:08:49 | INFO     | scraper.fetcher | Page 46 fetched
+2026-07-04 18:08:50 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-47.html
+2026-07-04 18:08:51 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-47.html [200]
+2026-07-04 18:08:51 | INFO     | scraper.fetcher | Page 47 fetched
+2026-07-04 18:08:52 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-48.html
+2026-07-04 18:08:52 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-48.html [200]
+2026-07-04 18:08:52 | INFO     | scraper.fetcher | Page 48 fetched
+2026-07-04 18:08:53 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-49.html
+2026-07-04 18:08:54 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-49.html [200]
+2026-07-04 18:08:54 | INFO     | scraper.fetcher | Page 49 fetched
+2026-07-04 18:08:55 | INFO     | scraper.fetcher | Fetching: https://books.toscrape.com/catalogue/page-50.html
+2026-07-04 18:08:56 | INFO     | scraper.fetcher | Fetched successfully: https://books.toscrape.com/catalogue/page-50.html [200]
+2026-07-04 18:08:56 | INFO     | scraper.fetcher | Page 50 fetched
+2026-07-04 18:08:56 | INFO     | scraper.fetcher | Pagination complete — 50 pages fetched (50 OK, 0 failed)
+2026-07-04 18:08:56 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:56 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:56 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:56 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:56 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:56 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:57 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | scraper.books_parser | Parsed 20 books from page
+2026-07-04 18:08:58 | INFO     | api.routes | Parsed 1000 raw records from 50 pages
+2026-07-04 18:08:58 | INFO     | scraper.cleaner | Cleaned 1000 / 1000 records
+2026-07-04 18:08:58 | INFO     | scraper.deduplicator | No duplicates found in 1000 records
+2026-07-04 18:08:58 | INFO     | storage.csv_writer | CSV exported: E:\INTERNSHIP PROJECT\web-scraping-pipeline\output\books_data.csv (1000 records)
+2026-07-04 18:08:59 | INFO     | storage.json_writer | JSON exported: E:\INTERNSHIP PROJECT\web-scraping-pipeline\output\books_data.json (1000 records)
+2026-07-04 18:08:59 | INFO     | storage.db_writer | DB_URL not configured — database storage disabled
+2026-07-04 18:08:59 | SUCCESS  | api.routes | Scrape complete: 1000 records in 96.24s

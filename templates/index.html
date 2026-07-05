@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Scalable Web Scraping Pipeline — A modern dashboard for scraping, cleaning, and analysing structured web data." />
+    <title>Scraping Pipeline — Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+    <!-- ================================================================= -->
+    <!-- SIDEBAR                                                           -->
+    <!-- ================================================================= -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <span class="brand-text">ScrapePipe</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="data">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                <span>Data</span>
+            </a>
+            <a href="#" class="nav-item" data-section="charts">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span>Charts</span>
+            </a>
+            <a href="#" class="nav-item" data-section="logs">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <span>Logs</span>
+            </a>
+            <a href="#" class="nav-item" data-section="settings">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+                <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================================================================= -->
+    <!-- MAIN CONTENT                                                      -->
+    <!-- ================================================================= -->
+    <main class="main-content" id="mainContent">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <h1 class="header-title">Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="parser-selector">
+                    <label for="parserSelect">Source</label>
+                    <select id="parserSelect">
+                        <option value="books">Books</option>
+                        <option value="quotes">Quotes</option>
+                        <option value="jobs">Jobs</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" id="runScraper">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>Run Scraper</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- SECTIONS (all visible, scrollable) -->
+        <div class="content-wrapper">
+
+            <!-- ======== DASHBOARD SECTION ======== -->
+            <section class="section" id="sectionDashboard">
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card" id="statRecords">
+                        <div class="stat-icon records">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Records Scraped</span>
+                            <span class="stat-value" id="valRecords">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statPages">
+                        <div class="stat-icon pages">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Pages Crawled</span>
+                            <span class="stat-value" id="valPages">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statTime">
+                        <div class="stat-icon time">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Execution Time</span>
+                            <span class="stat-value" id="valTime">0s</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statDuplicates">
+                        <div class="stat-icon duplicates">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Duplicates Removed</span>
+                            <span class="stat-value" id="valDuplicates">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statStatus">
+                        <div class="stat-icon status">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Status</span>
+                            <span class="stat-value status-badge" id="valStatus">Idle</span>
+                        </div>
+                    </div>
+                    <div class="stat-card" id="statLastRun">
+                        <div class="stat-icon lastrun">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Last Run</span>
+                            <span class="stat-value" id="valLastRun">Never</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ======== DATA SECTION ======== -->
+            <section class="section" id="sectionData">
+                <div class="section-header">
+                    <h2>Data Explorer</h2>
+                    <div class="data-controls">
+                        <div class="search-box">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="searchInput" placeholder="Search records…" />
+                        </div>
+                        <div class="export-buttons">
+                            <button class="btn btn-outline" id="exportCsv">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                CSV
+                            </button>
+                            <button class="btn btn-outline" id="exportJson">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="dataTable">
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                    <div class="table-empty" id="tableEmpty">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                        <p>No data yet. Click <strong>Run Scraper</strong> to start.</p>
+                    </div>
+                </div>
+                <div class="table-footer" id="tableFooter">
+                    <span id="recordCount">0 records</span>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </section>
+
+            <!-- ======== CHARTS SECTION ======== -->
+            <section class="section" id="sectionCharts">
+                <div class="section-header">
+                    <h2>Analytics</h2>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Distribution</h3>
+                        <canvas id="chartDistribution"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Ratings / Categories</h3>
+                        <canvas id="chartRatings"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Records Per Page</h3>
+                        <canvas id="chartPerPage"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Request Results</h3>
+                        <canvas id="chartRequests"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ======== LOGS SECTION ======== -->
+            <section class="section" id="sectionLogs">
+                <div class="section-header">
+                    <h2>Live Logs</h2>
+                    <button class="btn btn-outline btn-sm" id="refreshLogs">Refresh</button>
+                </div>
+                <div class="logs-container" id="logsContainer">
+                    <div class="log-empty">Logs will appear here after a scrape run.</div>
+                </div>
+            </section>
+
+            <!-- ======== SETTINGS SECTION ======== -->
+            <section class="section" id="sectionSettings">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label for="settingBaseUrl">Base URL</label>
+                        <input type="text" id="settingBaseUrl" placeholder="https://books.toscrape.com" />
+                    </div>
+                    <div class="setting-group">
+                        <label for="settingParser">Active Parser</label>
+                        <select id="settingParser">
+                            <option value="books">Books</option>
+                            <option value="quotes">Quotes</option>
+                            <option value="jobs">Jobs</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="settingTimeout">Timeout (seconds)</label>
+                        <input type="number" id="settingTimeout" min="1" max="120" />
+                    </div>
+                    <div class="setting-group">
+                        <label for="settingRetries">Max Retries</label>
+                        <input type="number" id="settingRetries" min="0" max="10" />
+                    </div>
+                    <div class="setting-group">
+                        <label for="settingUserAgent">User Agent</label>
+                        <input type="text" id="settingUserAgent" />
+                    </div>
+                    <div class="setting-group">
+                        <label for="settingDelay">Request Delay (seconds)</label>
+                        <input type="number" id="settingDelay" min="0" step="0.5" />
+                    </div>
+                    <div class="setting-actions">
+                        <button class="btn btn-primary" id="saveSettings">Save Settings</button>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /content-wrapper -->
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>&copy; 2026 ScrapePipe — Scalable Web Scraping Pipeline</span>
+            <span class="footer-version">v1.0.0</span>
+        </footer>
+    </main>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Scraping in progress…</p>
+    </div>
+
+    <!-- App Script -->
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
