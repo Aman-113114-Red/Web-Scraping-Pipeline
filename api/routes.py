@@ -72,6 +72,53 @@ def _get_latest_file(extension: str) -> Optional[Path]:
     return max(files, key=lambda p: p.stat().st_mtime)
 
 
+def _load_state_from_files() -> None:
+    """
+    Pre-populate _state from existing output files on startup.
+
+    This ensures Data Explorer, Analytics, and Stats display data
+    immediately after a server restart or Vercel cold start, without
+    requiring a fresh scrape run.
+    """
+    latest_json = _get_latest_file(".json")
+    if not latest_json:
+        return
+
+    try:
+        with open(latest_json, "r", encoding="utf-8") as f:
+            content = json.load(f)
+
+        data = content.get("data", [])
+        meta = content.get("metadata", {})
+
+        if not data:
+            return
+
+        columns = list(data[0].keys())
+        latest_csv = _get_latest_file(".csv")
+
+        with _lock:
+            _state["data"] = data
+            _state["columns"] = columns
+            _state["json_path"] = str(latest_json)
+            _state["csv_path"] = str(latest_csv) if latest_csv else None
+            _state["stats"]["records_scraped"] = meta.get("record_count", len(data))
+            _state["stats"]["last_run"] = meta.get("exported_at", None)
+            _state["stats"]["status"] = "completed"
+
+        logger.info(
+            "Loaded %d records from %s on startup",
+            len(data),
+            latest_json.name,
+        )
+    except Exception as exc:
+        logger.warning("Could not load state from files: %s", exc)
+
+
+# Hydrate state from existing output files on module load
+_load_state_from_files()
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -185,21 +232,13 @@ def _run_scraper(parser_name: Optional[str] = None, base_url: Optional[str] = No
 @api_bp.route("/data", methods=["GET"])
 def get_data():
     """Return scraped data, optionally filtered by a search query."""
+    # Re-hydrate from files if state is empty (cold start / restart)
+    if not _state["data"]:
+        _load_state_from_files()
+
     search = request.args.get("search", "").strip().lower()
     data = _state["data"]
     columns = _state["columns"]
-
-    if not data:
-        latest_json = _get_latest_file(".json")
-        if latest_json:
-            try:
-                with open(latest_json, "r", encoding="utf-8") as f:
-                    content = json.load(f)
-                    data = content.get("data", [])
-                    if data and not columns:
-                        columns = list(data[0].keys())
-            except Exception as e:
-                logger.error("Failed to load data from file: %s", e)
 
     if search and data:
         data = [
@@ -221,30 +260,43 @@ def get_data():
 @api_bp.route("/stats", methods=["GET"])
 def get_stats():
     """Return pipeline statistics."""
-    stats = dict(_state["stats"])
-    
-    if stats["records_scraped"] == 0:
-        latest_json = _get_latest_file(".json")
-        if latest_json:
-            try:
-                with open(latest_json, "r", encoding="utf-8") as f:
-                    content = json.load(f)
-                    meta = content.get("metadata", {})
-                    stats["records_scraped"] = meta.get("record_count", 0)
-                    stats["last_run"] = meta.get("exported_at", None)
-                    if stats["status"] == "idle":
-                        stats["status"] = "completed (loaded from file)"
-            except Exception:
-                pass
+    # Re-hydrate from files if state is empty (cold start / restart)
+    if _state["stats"]["records_scraped"] == 0:
+        _load_state_from_files()
 
-    return jsonify(stats)
+    return jsonify(_state["stats"])
 
 
 @api_bp.route("/logs", methods=["GET"])
 def get_logs():
-    """Return recent log entries from the in-memory buffer."""
+    """Return recent log entries from the in-memory buffer or log file."""
     limit = request.args.get("limit", 100, type=int)
     logs = get_log_buffer()
+
+    # Fallback: supplement from log file if buffer has fewer entries than requested
+    if len(logs) < limit:
+        log_file = Settings.LOG_FOLDER / "pipeline.log"
+        if log_file.exists():
+            try:
+                lines = log_file.read_text(encoding="utf-8").strip().splitlines()
+                file_logs = []
+                for line in lines[-limit:]:
+                    parts = line.split(" | ", 3)
+                    if len(parts) >= 3:
+                        file_logs.append({
+                            "timestamp": parts[0].strip(),
+                            "level": parts[1].strip(),
+                            "message": parts[3].strip() if len(parts) > 3 else parts[2].strip(),
+                            "module": parts[2].strip() if len(parts) > 3 else "",
+                        })
+                # Merge: file logs first, then buffer logs (avoid duplicates by timestamp)
+                buffer_timestamps = {l.get("timestamp") for l in logs}
+                merged = [l for l in file_logs if l.get("timestamp") not in buffer_timestamps]
+                merged.extend(logs)
+                logs = merged
+            except Exception:
+                pass
+
     return jsonify({
         "logs": logs[-limit:],
         "total": len(logs),
