@@ -16,6 +16,7 @@ Usage
 """
 
 import logging
+import os
 import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
@@ -113,15 +114,16 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
     logger.addHandler(console_handler)
 
     # --- Rotating file handler --------------------------------------------
-    log_file = Settings.LOG_FOLDER / "pipeline.log"
-    file_handler = RotatingFileHandler(
-        log_file,
-        maxBytes=10 * 1024 * 1024,  # 10 MB
-        backupCount=5,
-        encoding="utf-8",
-    )
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    if os.getenv("VERCEL") != "1":
+        log_file = Settings.LOG_FOLDER / "pipeline.log"
+        file_handler = RotatingFileHandler(
+            log_file,
+            maxBytes=10 * 1024 * 1024,  # 10 MB
+            backupCount=5,
+            encoding="utf-8",
+        )
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
     # --- In-memory buffer handler -----------------------------------------
     buffer_handler = BufferHandler()
