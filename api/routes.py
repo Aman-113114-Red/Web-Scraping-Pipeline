@@ -18,6 +18,7 @@ Endpoints
 
 import time
 import threading
+import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -59,6 +60,16 @@ _state: Dict[str, Any] = {
     "is_running": False,
 }
 _lock = threading.Lock()
+
+
+def _get_latest_file(extension: str) -> Optional[Path]:
+    """Find the most recently modified file with the given extension in the output folder."""
+    if not Settings.OUTPUT_FOLDER.exists():
+        return None
+    files = list(Settings.OUTPUT_FOLDER.glob(f"*{extension}"))
+    if not files:
+        return None
+    return max(files, key=lambda p: p.stat().st_mtime)
 
 
 # ---------------------------------------------------------------------------
@@ -176,6 +187,19 @@ def get_data():
     """Return scraped data, optionally filtered by a search query."""
     search = request.args.get("search", "").strip().lower()
     data = _state["data"]
+    columns = _state["columns"]
+
+    if not data:
+        latest_json = _get_latest_file(".json")
+        if latest_json:
+            try:
+                with open(latest_json, "r", encoding="utf-8") as f:
+                    content = json.load(f)
+                    data = content.get("data", [])
+                    if data and not columns:
+                        columns = list(data[0].keys())
+            except Exception as e:
+                logger.error("Failed to load data from file: %s", e)
 
     if search and data:
         data = [
@@ -188,7 +212,7 @@ def get_data():
 
     return jsonify({
         "data": data,
-        "columns": _state["columns"],
+        "columns": columns,
         "total": len(data),
         "parser": Settings.ACTIVE_PARSER,
     })
@@ -197,7 +221,23 @@ def get_data():
 @api_bp.route("/stats", methods=["GET"])
 def get_stats():
     """Return pipeline statistics."""
-    return jsonify(_state["stats"])
+    stats = dict(_state["stats"])
+    
+    if stats["records_scraped"] == 0:
+        latest_json = _get_latest_file(".json")
+        if latest_json:
+            try:
+                with open(latest_json, "r", encoding="utf-8") as f:
+                    content = json.load(f)
+                    meta = content.get("metadata", {})
+                    stats["records_scraped"] = meta.get("record_count", 0)
+                    stats["last_run"] = meta.get("exported_at", None)
+                    if stats["status"] == "idle":
+                        stats["status"] = "completed (loaded from file)"
+            except Exception:
+                pass
+
+    return jsonify(stats)
 
 
 @api_bp.route("/logs", methods=["GET"])
@@ -269,6 +309,11 @@ def export_csv_endpoint():
     """Download the most recent CSV export."""
     csv_path = _state.get("csv_path")
     if not csv_path or not Path(csv_path).exists():
+        latest_csv = _get_latest_file(".csv")
+        if latest_csv:
+            csv_path = str(latest_csv)
+            
+    if not csv_path or not Path(csv_path).exists():
         return jsonify({"error": "No CSV file available. Run a scrape first."}), 404
     return send_file(csv_path, as_attachment=True, mimetype="text/csv")
 
@@ -277,6 +322,11 @@ def export_csv_endpoint():
 def export_json_endpoint():
     """Download the most recent JSON export."""
     json_path = _state.get("json_path")
+    if not json_path or not Path(json_path).exists():
+        latest_json = _get_latest_file(".json")
+        if latest_json:
+            json_path = str(latest_json)
+
     if not json_path or not Path(json_path).exists():
         return jsonify({"error": "No JSON file available. Run a scrape first."}), 404
     return send_file(json_path, as_attachment=True, mimetype="application/json")
