@@ -36,8 +36,8 @@ class Settings:
     REQUEST_DELAY: float = float(os.getenv("REQUEST_DELAY", "1"))
 
     # --- Output -----------------------------------------------------------
-    OUTPUT_FOLDER: Path = PROJECT_ROOT / os.getenv("OUTPUT_FOLDER", "output")
-    LOG_FOLDER: Path = PROJECT_ROOT / os.getenv("LOG_FOLDER", "logs")
+    OUTPUT_FOLDER: Path = Path("/tmp/output") if os.getenv("VERCEL") == "1" else PROJECT_ROOT / os.getenv("OUTPUT_FOLDER", "output")
+    LOG_FOLDER: Path = Path("/tmp/logs") if os.getenv("VERCEL") == "1" else PROJECT_ROOT / os.getenv("LOG_FOLDER", "logs")
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO").upper()
 
     # --- API --------------------------------------------------------------
@@ -117,7 +117,10 @@ class Settings:
                 elif cast_type == float:
                     setattr(cls, env_key, float(value))
                 elif env_key in ("OUTPUT_FOLDER", "LOG_FOLDER"):
-                    setattr(cls, env_key, PROJECT_ROOT / str(value))
+                    if os.getenv("VERCEL") == "1":
+                        setattr(cls, env_key, Path(f"/tmp/{'output' if env_key == 'OUTPUT_FOLDER' else 'logs'}"))
+                    else:
+                        setattr(cls, env_key, PROJECT_ROOT / str(value))
                 elif env_key == "DEBUG":
                     setattr(cls, env_key, str(value).lower() in ("true", "1", "yes"))
                 else:

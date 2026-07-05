@@ -533,3 +533,5 @@
 2026-07-04 18:08:59 | INFO     | storage.json_writer | JSON exported: E:\INTERNSHIP PROJECT\web-scraping-pipeline\output\books_data.json (1000 records)
 2026-07-04 18:08:59 | INFO     | storage.db_writer | DB_URL not configured — database storage disabled
 2026-07-04 18:08:59 | SUCCESS  | api.routes | Scrape complete: 1000 records in 96.24s
+2026-07-05 18:35:25 | INFO     | api.app | Flask application created
+2026-07-05 18:35:25 | INFO     | main | Starting dashboard server on http://0.0.0.0:5000
