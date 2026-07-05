@@ -56,8 +56,11 @@ class Settings:
     @classmethod
     def ensure_directories(cls) -> None:
         """Create output and log directories if they don't exist."""
-        cls.OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
-        cls.LOG_FOLDER.mkdir(parents=True, exist_ok=True)
+        try:
+            cls.OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+            cls.LOG_FOLDER.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            pass
 
     @classmethod
     def get_parser_config(cls) -> dict:
@@ -130,7 +133,10 @@ class Settings:
             if not found:
                 env_lines.append(f"{env_key}={value}")
 
-        env_path.write_text("\n".join(env_lines) + "\n", encoding="utf-8")
+        try:
+            env_path.write_text("\n".join(env_lines) + "\n", encoding="utf-8")
+        except OSError:
+            pass
 
     @classmethod
     def to_dict(cls) -> dict:

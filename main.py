@@ -19,10 +19,11 @@ from utils.logger import get_logger
 
 logger = get_logger("main")
 
+app = create_app()
+
 
 def run_server() -> None:
     """Start the Flask API server and Dashboard."""
-    app = create_app()
     logger.info("Starting dashboard server on http://%s:%d", Settings.API_HOST, Settings.API_PORT)
     app.run(
         host=Settings.API_HOST,
