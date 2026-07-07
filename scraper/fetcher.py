@@ -21,6 +21,10 @@ from utils.retry import retry
 
 logger = get_logger(__name__)
 
+class AntiBotException(Exception):
+    """Raised when the target website blocks the request."""
+    pass
+
 
 class Fetcher:
     """
@@ -69,7 +73,19 @@ class Fetcher:
         logger.info("Fetching: %s", url)
 
         response = self.session.get(url, timeout=self.timeout)
+
+        # Anti-Bot Detection: Status codes
+        if response.status_code in (403, 429):
+            raise AntiBotException(f"Anti Bot Protection Detected: Status {response.status_code}")
+
         response.raise_for_status()
+
+        # Anti-Bot Detection: HTML Content
+        text_lower = response.text.lower()
+        if "cloudflare" in text_lower or "captcha" in text_lower or "access denied" in text_lower or "verification required" in text_lower:
+            # Basic heuristic: if it looks like a challenge page
+            if len(response.text) < 50000: # usually these pages are small
+                raise AntiBotException("Anti Bot Protection Detected: Challenge page found.")
 
         self.successful_requests += 1
         logger.info("Fetched successfully: %s [%d]", url, response.status_code)

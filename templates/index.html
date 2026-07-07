@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Scalable Web Scraping Pipeline — A modern dashboard for scraping, cleaning, and analysing structured web data." />
-    <title>Scraping Pipeline — Dashboard</title>
+    <title id="pageTitle">Scraping Pipeline — Dashboard</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -52,14 +52,14 @@
             </a>
             <a href="#" class="nav-item" data-section="settings">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                <span>Settings</span>
+                <span>Workspace</span>
             </a>
         </nav>
 
         <div class="sidebar-footer">
-            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
-                <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+                <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </button>
         </div>
     </aside>
@@ -71,24 +71,22 @@
         <!-- HEADER -->
         <header class="header">
             <div class="header-left">
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                 </button>
-                <h1 class="header-title">Dashboard</h1>
+                <h1 class="header-title" id="headerTitle">Dashboard</h1>
             </div>
             <div class="header-right">
-                <div class="parser-selector">
-                    <label for="parserSelect">Source</label>
-                    <select id="parserSelect">
-                        <option value="books">Books</option>
-                        <option value="quotes">Quotes</option>
-                        <option value="jobs">Jobs</option>
-                    </select>
+                <div class="url-input-group">
+                    <div class="url-input-wrapper">
+                        <svg class="url-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        <input type="text" id="targetUrl" placeholder="https://books.toscrape.com" aria-label="Target Website URL" />
+                    </div>
+                    <button class="btn btn-primary" id="runScraper">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <span>Start Scraping</span>
+                    </button>
                 </div>
-                <button class="btn btn-primary" id="runScraper">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    <span>Run Scraper</span>
-                </button>
             </div>
         </header>
 
@@ -97,6 +95,37 @@
 
             <!-- ======== DASHBOARD SECTION ======== -->
             <section class="section" id="sectionDashboard">
+                <!-- Website Information Card -->
+                <div class="website-info-card" id="websiteInfoCard">
+                    <div class="info-header">
+                        <div class="info-domain">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            <span id="infoDomain">toscrape.com</span>
+                        </div>
+                        <span class="info-status idle" id="infoStatus">Idle</span>
+                    </div>
+                    <div class="info-type" id="infoType">Books E-Commerce Platform</div>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Protection Status</span>
+                            <span class="info-value" id="infoProtection">Standard</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total Records</span>
+                            <span class="info-value" id="infoTotalRecords">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Last Scrape Time</span>
+                            <span class="info-value" id="infoLastScrape">Never</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Scrape Duration</span>
+                            <span class="info-value" id="infoDuration">0s</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Statistics Cards -->
                 <div class="stats-grid">
                     <div class="stat-card" id="statRecords">
@@ -105,7 +134,7 @@
                         </div>
                         <div class="stat-info">
                             <span class="stat-label">Records Scraped</span>
-                            <span class="stat-value" id="valRecords">0</span>
+                            <span class="stat-value" id="valRecords"><span class="skeleton-line"></span></span>
                         </div>
                     </div>
                     <div class="stat-card" id="statPages">
@@ -114,7 +143,7 @@
                         </div>
                         <div class="stat-info">
                             <span class="stat-label">Pages Crawled</span>
-                            <span class="stat-value" id="valPages">0</span>
+                            <span class="stat-value" id="valPages"><span class="skeleton-line"></span></span>
                         </div>
                     </div>
                     <div class="stat-card" id="statTime">
@@ -123,7 +152,7 @@
                         </div>
                         <div class="stat-info">
                             <span class="stat-label">Execution Time</span>
-                            <span class="stat-value" id="valTime">0s</span>
+                            <span class="stat-value" id="valTime"><span class="skeleton-line"></span></span>
                         </div>
                     </div>
                     <div class="stat-card" id="statDuplicates">
@@ -132,7 +161,7 @@
                         </div>
                         <div class="stat-info">
                             <span class="stat-label">Duplicates Removed</span>
-                            <span class="stat-value" id="valDuplicates">0</span>
+                            <span class="stat-value" id="valDuplicates"><span class="skeleton-line"></span></span>
                         </div>
                     </div>
                     <div class="stat-card" id="statStatus">
@@ -162,8 +191,8 @@
                     <h2>Data Explorer</h2>
                     <div class="data-controls">
                         <div class="search-box">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                            <input type="text" id="searchInput" placeholder="Search records…" />
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="searchInput" placeholder="Search records…" aria-label="Search records" />
                         </div>
                         <div class="export-buttons">
                             <button class="btn btn-outline" id="exportCsv">
@@ -182,9 +211,12 @@
                         <thead id="tableHead"></thead>
                         <tbody id="tableBody"></tbody>
                     </table>
-                    <div class="table-empty" id="tableEmpty">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                        <p>No data yet. Click <strong>Run Scraper</strong> to start.</p>
+                    <div class="table-empty empty-state" id="tableEmpty">
+                        <div class="empty-state-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                        </div>
+                        <span class="empty-state-title">No Data Available</span>
+                        <span class="empty-state-desc">Click <strong>Run Scraper</strong> to fetch and display data from your target website.</span>
                     </div>
                 </div>
                 <div class="table-footer" id="tableFooter">
@@ -199,19 +231,19 @@
                     <h2>Analytics</h2>
                 </div>
                 <div class="charts-grid">
-                    <div class="chart-card">
+                    <div class="chart-card accent-blue">
                         <h3>Distribution</h3>
                         <canvas id="chartDistribution"></canvas>
                     </div>
-                    <div class="chart-card">
+                    <div class="chart-card accent-purple">
                         <h3>Ratings / Categories</h3>
                         <canvas id="chartRatings"></canvas>
                     </div>
-                    <div class="chart-card">
+                    <div class="chart-card accent-cyan">
                         <h3>Records Per Page</h3>
                         <canvas id="chartPerPage"></canvas>
                     </div>
-                    <div class="chart-card">
+                    <div class="chart-card accent-green">
                         <h3>Request Results</h3>
                         <canvas id="chartRequests"></canvas>
                     </div>
@@ -222,50 +254,173 @@
             <section class="section" id="sectionLogs">
                 <div class="section-header">
                     <h2>Live Logs</h2>
-                    <button class="btn btn-outline btn-sm" id="refreshLogs">Refresh</button>
+                    <div class="log-actions" style="display: flex; gap: 8px; align-items: center;">
+                        <div class="log-filters" id="logFilters">
+                            <button class="log-filter-btn active" data-level="ALL">All</button>
+                            <button class="log-filter-btn" data-level="INFO">Info</button>
+                            <button class="log-filter-btn" data-level="WARNING">Warn</button>
+                            <button class="log-filter-btn" data-level="ERROR">Error</button>
+                        </div>
+                        <button class="btn btn-outline btn-sm" id="refreshLogs">Refresh</button>
+                    </div>
                 </div>
                 <div class="logs-container" id="logsContainer">
-                    <div class="log-empty">Logs will appear here after a scrape run.</div>
+                    <div class="log-empty empty-state">
+                        <div class="empty-state-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                        </div>
+                        <span class="empty-state-title">No Logs Yet</span>
+                        <span class="empty-state-desc">Logs will appear here after running a scrape.</span>
+                    </div>
                 </div>
             </section>
 
-            <!-- ======== SETTINGS SECTION ======== -->
+            <!-- ======== WORKSPACE SECTION ======== -->
             <section class="section" id="sectionSettings">
                 <div class="section-header">
-                    <h2>Settings</h2>
+                    <h2>Workspace <span style="font-size: 0.5em; color: var(--text-muted); font-weight: 400; margin-left: 8px;">System Information & Preferences</span></h2>
                 </div>
-                <div class="settings-grid">
-                    <div class="setting-group">
-                        <label for="settingBaseUrl">Base URL</label>
-                        <input type="text" id="settingBaseUrl" placeholder="https://books.toscrape.com" />
+                
+                <div class="workspace-grid">
+                    
+                    <!-- Section 1: Application Status -->
+                    <div class="workspace-card status-card">
+                        <div class="ws-card-header">
+                            <h3><span class="ws-icon">🟢</span> Application Status</h3>
+                        </div>
+                        <div class="ws-card-body grid-2col">
+                            <div class="ws-stat"><span class="ws-label">Status</span><span class="ws-value text-green">Ready</span></div>
+                            <div class="ws-stat"><span class="ws-label">System Health</span><span class="ws-value">Healthy</span></div>
+                            <div class="ws-stat"><span class="ws-label">Backend</span><span class="ws-value">Flask</span></div>
+                            <div class="ws-stat"><span class="ws-label">Deployment</span><span class="ws-value">Vercel</span></div>
+                            <div class="ws-stat"><span class="ws-label">Current Version</span><span class="ws-value">1.0.0</span></div>
+                            <div class="ws-stat"><span class="ws-label">Last Scrape</span><span class="ws-value" id="wsLastScrape">Never</span></div>
+                        </div>
                     </div>
-                    <div class="setting-group">
-                        <label for="settingParser">Active Parser</label>
-                        <select id="settingParser">
-                            <option value="books">Books</option>
-                            <option value="quotes">Quotes</option>
-                            <option value="jobs">Jobs</option>
-                        </select>
+
+                    <!-- Section 2: Supported Website Types -->
+                    <div class="workspace-card span-2">
+                        <div class="ws-card-header">
+                            <h3><span class="ws-icon">🌐</span> Supported Website Types</h3>
+                        </div>
+                        <div class="ws-card-body category-list">
+                            <div class="category-card">
+                                <div class="cat-icon">📚</div>
+                                <div class="cat-info">
+                                    <h4>Books</h4>
+                                    <p>Extracts Title, Price, Rating, Availability</p>
+                                    <span class="cat-status">Supported</span>
+                                </div>
+                            </div>
+                            <div class="category-card">
+                                <div class="cat-icon">💬</div>
+                                <div class="cat-info">
+                                    <h4>Quotes</h4>
+                                    <p>Extracts Quote, Author, Tags</p>
+                                    <span class="cat-status">Supported</span>
+                                </div>
+                            </div>
+                            <div class="category-card">
+                                <div class="cat-icon">💼</div>
+                                <div class="cat-info">
+                                    <h4>Jobs</h4>
+                                    <p>Extracts Title, Company, Location, Date</p>
+                                    <span class="cat-status">Supported</span>
+                                </div>
+                            </div>
+                            <div class="category-card">
+                                <div class="cat-icon">🛒</div>
+                                <div class="cat-info">
+                                    <h4>Products</h4>
+                                    <p>Extracts Name, Price, SKU, Inventory</p>
+                                    <span class="cat-status">Supported</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="setting-group">
-                        <label for="settingTimeout">Timeout (seconds)</label>
-                        <input type="number" id="settingTimeout" min="1" max="120" />
+
+                    <!-- Section 3: Output Formats -->
+                    <div class="workspace-card">
+                        <div class="ws-card-header">
+                            <h3><span class="ws-icon">💾</span> Output Formats</h3>
+                        </div>
+                        <div class="ws-card-body flex-col gap-sm">
+                            <div class="format-badge"><span class="format-name">CSV</span><span class="format-status">Enabled</span></div>
+                            <div class="format-badge"><span class="format-name">JSON</span><span class="format-status">Enabled</span></div>
+                        </div>
                     </div>
-                    <div class="setting-group">
-                        <label for="settingRetries">Max Retries</label>
-                        <input type="number" id="settingRetries" min="0" max="10" />
+
+                    <!-- Section 4: Scraping Configuration -->
+                    <div class="workspace-card span-2 config-card">
+                        <div class="ws-card-header">
+                            <h3><span class="ws-icon">⚙️</span> Runtime Configuration</h3>
+                        </div>
+                        <div class="ws-card-body settings-grid-new">
+                            <div class="setting-group">
+                                <label for="settingTimeout">Request Timeout (sec)</label>
+                                <input type="number" id="settingTimeout" min="1" max="120" />
+                            </div>
+                            <div class="setting-group">
+                                <label for="settingRetries">Maximum Retries</label>
+                                <input type="number" id="settingRetries" min="0" max="10" />
+                            </div>
+                            <div class="setting-group">
+                                <label for="settingDelay">Request Delay (sec)</label>
+                                <input type="number" id="settingDelay" min="0" step="0.5" />
+                            </div>
+                            <div class="setting-group">
+                                <label for="settingUserAgent">User Agent</label>
+                                <input type="text" id="settingUserAgent" placeholder="Default Browser" />
+                            </div>
+                            <div class="setting-actions full-width">
+                                <button class="btn btn-primary" id="saveSettings">Save Preferences</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="setting-group">
-                        <label for="settingUserAgent">User Agent</label>
-                        <input type="text" id="settingUserAgent" />
+
+                    <!-- Section 5: Features -->
+                    <div class="workspace-card span-2">
+                        <div class="ws-card-header">
+                            <h3><span class="ws-icon">✨</span> Platform Features</h3>
+                        </div>
+                        <div class="ws-card-body features-grid">
+                            <div class="feature-item">✓ Automatic Website Detection</div>
+                            <div class="feature-item">✓ Duplicate Removal</div>
+                            <div class="feature-item">✓ CSV & JSON Export</div>
+                            <div class="feature-item">✓ Analytics Dashboard</div>
+                            <div class="feature-item">✓ Live Logs & Monitoring</div>
+                            <div class="feature-item">✓ Data Explorer</div>
+                            <div class="feature-item">✓ Retry Mechanism</div>
+                            <div class="feature-item">✓ Responsive UI</div>
+                        </div>
                     </div>
-                    <div class="setting-group">
-                        <label for="settingDelay">Request Delay (seconds)</label>
-                        <input type="number" id="settingDelay" min="0" step="0.5" />
+
+                    <!-- Section 6: System Metrics -->
+                    <div class="workspace-card">
+                        <div class="ws-card-header">
+                            <h3><span class="ws-icon">📊</span> System Metrics</h3>
+                        </div>
+                        <div class="ws-card-body grid-2col gap-md">
+                            <div class="ws-stat"><span class="ws-label">Total Scrapes</span><span class="ws-value" id="wsTotalScrapes">0</span></div>
+                            <div class="ws-stat"><span class="ws-label">Avg Duration</span><span class="ws-value" id="wsAvgDuration">0s</span></div>
+                            <div class="ws-stat"><span class="ws-label">Total Records</span><span class="ws-value" id="wsTotalRecords">0</span></div>
+                            <div class="ws-stat"><span class="ws-label">Success Rate</span><span class="ws-value text-green">100%</span></div>
+                        </div>
                     </div>
-                    <div class="setting-actions">
-                        <button class="btn btn-primary" id="saveSettings">Save Settings</button>
+
+                    <!-- Section 7: About -->
+                    <div class="workspace-card">
+                        <div class="ws-card-header">
+                            <h3><span class="ws-icon">ℹ️</span> About</h3>
+                        </div>
+                        <div class="ws-card-body tech-stack">
+                            <div class="ws-stat"><span class="ws-label">Platform</span><span class="ws-value">ScrapePipe</span></div>
+                            <div class="ws-stat"><span class="ws-label">Core Tech</span><span class="ws-value">Python, Flask</span></div>
+                            <div class="ws-stat"><span class="ws-label">Scraping</span><span class="ws-value">Requests, BeautifulSoup</span></div>
+                            <div class="ws-stat"><span class="ws-label">Frontend</span><span class="ws-value">Vanilla JS, Chart.js</span></div>
+                        </div>
                     </div>
+
                 </div>
             </section>
 
@@ -283,8 +438,117 @@
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-        <p>Scraping in progress…</p>
+        <div class="pipeline-container">
+        <div class="pipeline-container">
+            <div class="pipeline-top">
+                <div class="pipeline-stats-grid">
+                    <div class="p-stat">
+                        <span class="p-stat-label">Current Stage</span>
+                        <span class="p-stat-value" id="pipelineCurrentStage">Initializing...</span>
+                    </div>
+                    <div class="p-stat">
+                        <span class="p-stat-label">Progress</span>
+                        <span class="p-stat-value" id="pipelinePercent">0 / 11 Stages Completed</span>
+                    </div>
+                    <div class="p-stat">
+                        <span class="p-stat-label">Elapsed</span>
+                        <span class="p-stat-value"><strong id="pipelineElapsed">0s</strong></span>
+                    </div>
+                    <div class="p-stat">
+                        <span class="p-stat-label">Remaining</span>
+                        <span class="p-stat-value"><strong id="pipelineEstimated">~30s</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pipeline-stages" id="pipelineStages">
+                <!-- Row 1 -->
+                <div class="pipeline-row">
+                    <div class="pipeline-stage" data-stage="0">
+                        <div class="stage-dot">🌐</div>
+                        <span class="stage-label">Website</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="1">
+                        <div class="stage-dot">🛡️</div>
+                        <span class="stage-label">Validating</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="2">
+                        <div class="stage-dot">🔗</div>
+                        <span class="stage-label">Connecting</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="3">
+                        <div class="stage-dot">📥</div>
+                        <span class="stage-label">Downloading</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="4">
+                        <div class="stage-dot">🔍</div>
+                        <span class="stage-label">Extracting</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="5">
+                        <div class="stage-dot">🧹</div>
+                        <span class="stage-label">Cleaning</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                </div>
+
+                <!-- Bridge Connector (Index 5) -->
+                <div class="stage-connector bridge-down"></div>
+
+                <!-- Row 2 -->
+                <div class="pipeline-row">
+                    <div class="pipeline-stage" data-stage="6">
+                        <div class="stage-dot">📦</div>
+                        <span class="stage-label">Deduplicating</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="7">
+                        <div class="stage-dot">📄</div>
+                        <span class="stage-label">CSV</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="8">
+                        <div class="stage-dot">📑</div>
+                        <span class="stage-label">JSON</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="9">
+                        <div class="stage-dot">📊</div>
+                        <span class="stage-label">Updating</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                    <div class="stage-connector"></div>
+                    <div class="pipeline-stage" data-stage="10">
+                        <div class="stage-dot">✅</div>
+                        <span class="stage-label">Completed</span>
+                        <span class="stage-status"></span>
+                        <span class="stage-context"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- App Script -->

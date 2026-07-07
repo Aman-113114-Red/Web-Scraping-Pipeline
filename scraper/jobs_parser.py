@@ -40,7 +40,7 @@ class Parser:
     """
 
     name: str = "Jobs Board"
-    base_url: str = "https://example.com/jobs"
+    base_url: str = "https://www.python.org/jobs/"
 
     # ------------------------------------------------------------------
     # Interface methods
@@ -63,19 +63,10 @@ class Parser:
     def get_next_page(self, soup: BeautifulSoup, current_url: str) -> Optional[str]:
         """
         Determine the URL of the next page.
-
-        Override this method with real pagination logic when connecting
-        to a live jobs website.
-
-        Returns
-        -------
-        None
-            Always returns ``None`` in the stub (single page).
         """
-        # Example implementation (uncomment and adapt for a real site):
-        # next_btn = soup.select_one("a.next-page")
-        # if next_btn and next_btn.get("href"):
-        #     return build_absolute_url(current_url, next_btn["href"])
+        next_btn = soup.select_one("li.next a")
+        if next_btn and next_btn.get("href"):
+            return build_absolute_url(current_url, next_btn["href"])
         return None
 
     def parse_listing(self, soup: BeautifulSoup, current_url: str) -> List[Dict[str, Any]]:
@@ -101,7 +92,7 @@ class Parser:
 
         # Common pattern: each job is in a card/row element
         # Adapt these selectors for the actual target site
-        job_cards = soup.select("div.job-card, div.job-listing, tr.job-row")
+        job_cards = soup.select("ol.list-recent-jobs li")
 
         if not job_cards:
             logger.warning(
@@ -130,15 +121,21 @@ class Parser:
 
         Adapt the CSS selectors below for the target website.
         """
-        title_tag = card.select_one("h2.job-title, a.job-title, .title")
-        company_tag = card.select_one("span.company, .company-name")
-        location_tag = card.select_one("span.location, .job-location")
-        salary_tag = card.select_one("span.salary, .job-salary")
-        link_tag = card.select_one("a[href]")
-        date_tag = card.select_one("span.date, time, .posted-date")
+        title_tag = card.select_one("span.listing-company-name a")
+        company_tag = card.select_one("span.listing-company-name")
+        location_tag = card.select_one("span.listing-location")
+        salary_tag = card.select_one("span.salary, .job-salary") # Doesn't exist on python.org, will fallback
+        link_tag = card.select_one("span.listing-company-name a")
+        date_tag = card.select_one("time")
 
         title = clean_whitespace(title_tag.get_text()) if title_tag else "N/A"
-        company = clean_whitespace(company_tag.get_text()) if company_tag else "N/A"
+        
+        # Extract company from the last text node in company_tag
+        company = "N/A"
+        if company_tag:
+            # The company name is usually the last text element after the <br>
+            company = clean_whitespace(company_tag.contents[-1].text if hasattr(company_tag.contents[-1], 'text') else str(company_tag.contents[-1]))
+        
         location = clean_whitespace(location_tag.get_text()) if location_tag else "N/A"
         salary = clean_whitespace(salary_tag.get_text()) if salary_tag else "N/A"
         job_url = ""

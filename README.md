@@ -1,87 +1,101 @@
-# Scalable Web Scraping Pipeline
+# Intelligent Web Scraping Platform
 
-A production-ready, modular web scraping pipeline with a modern hybrid dashboard, REST API, and highly configurable architecture. Designed to support scraping multiple websites seamlessly by simply dropping in new parser modules.
+![Status](https://img.shields.io/badge/Status-Production_Ready-success)
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
+![Flask](https://img.shields.io/badge/Backend-Flask-lightgrey)
+![Architecture](https://img.shields.io/badge/Architecture-Modular-orange)
 
-## Architecture
+An intelligent, adaptive, and scalable web scraping pipeline featuring a professional SaaS-grade dashboard. This platform dynamically detects target websites, routes them to specialized scraping modules, cleans the extracted data, and presents rich analytics in a highly responsive user interface.
 
-The project follows clean architecture principles, separating concerns into distinct layers:
+---
 
-1. **Configuration**: Centralised settings loaded from `.env`.
-2. **Scraper Engine**:
-   - `Fetcher`: Handles HTTP requests, pagination, retries, and timeouts.
-   - `Parsers`: Website-specific logic to extract data (dynamically loaded).
-   - `Cleaner`: Generic normalisation of prices, ratings, and strings.
-   - `Deduplicator`: Key-based duplicate removal.
-3. **Storage Layer**: CSV, JSON, and optional PostgreSQL writers.
-4. **REST API**: Flask backend providing endpoints for data, stats, logs, and triggers.
-5. **Dashboard**: A premium, responsive HTML/CSS/JS frontend with live charts and real-time updates.
+## 🌟 Key Features
 
-## Folder Structure
+* **Intelligent Website Detection:** Instantly evaluates any URL, determines support status, detects anti-bot protections, and routes to the appropriate parser.
+* **Modular Scraping Architecture:** Easily extensible `WEBSITE_REGISTRY` pattern allows adding new target sites without modifying core pipeline logic.
+* **Schema-Aware Analytics:** The dashboard automatically generates contextual charts (e.g., *Price Distribution* for Books, *Salary Trends* for Jobs) based on the specific schema of the scraped data.
+* **Robust Data Pipeline:** Built-in deduplication, configurable request retries, exponential backoff, and robust error handling.
+* **Professional UI/UX:** Responsive design, smooth micro-animations, comprehensive empty states, interactive live logs, and a dark/light mode toggle.
+* **Instant Export:** Export structured datasets directly to CSV or JSON formats.
 
-```
-web-scraping-pipeline/
-├── api/             # Flask application and REST routes
-├── config/          # Centralised settings
-├── scraper/         # Fetcher, cleaner, deduplicator, and parsers
-├── static/          # CSS styles and JS dashboard logic
-├── storage/         # CSV, JSON, and Database writers
-├── templates/       # HTML dashboard layout
-├── tests/           # Pytest suite
-├── utils/           # Logger, retry decorators, and helpers
-├── main.py          # CLI entry point
-├── .env             # Environment variables
-└── requirements.txt # Python dependencies
-```
+---
 
-## Installation
+## 🏗️ Architecture
 
-1. Clone the repository and navigate to the folder.
-2. Create and activate a virtual environment:
+The platform follows a clean separation of concerns:
+
+1. **Frontend (Vanilla JS + CSS + HTML):** A high-performance, lightweight SPA (Single Page Application) powered by modern CSS Grid/Flexbox and Chart.js.
+2. **Backend API (Flask):** Exposes RESTful endpoints for triggering scrapes, fetching system metrics, streaming logs, and downloading data.
+3. **Scraping Engine (Requests + BeautifulSoup):** Executes parallel HTTP requests with anti-bot evasion heuristics.
+4. **Data Processor:** Cleans schemas and deduplicates records in memory.
+5. **Storage Layer:** Persists state and historical runs on the filesystem.
+
+---
+
+## 🚀 Supported Targets
+
+The platform currently includes robust parsers for the following domain templates:
+
+| Domain | Extracted Entities | Analytics Focus |
+|--------|---------------------|-----------------|
+| **Books (E-commerce)** | Title, Price, Rating, Availability | Value Distribution, Category Trends |
+| **Quotes (Content)** | Quote Text, Author, Tags | Tag Density, Author Frequency |
+| **Python Jobs (Listings)**| Job Title, Company, Location | Geographic Spread, Hiring Trends |
+
+*Note: Unsupported or protected websites will gracefully degrade, showing a clear explanation in the UI without crashing the application.*
+
+---
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
+- Python 3.9+
+- pip (Python package installer)
+
+### Local Development
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/web-scraping-pipeline.git
+   cd web-scraping-pipeline
+   ```
+
+2. **Create a virtual environment:**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
    ```
-3. Install dependencies:
+
+3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
-4. Copy the environment template and adjust if necessary:
+
+4. **Run the Flask application:**
    ```bash
-   cp .env.example .env
+   python main.py
    ```
+   *The application will be available at `http://localhost:5000`.*
 
-## How to Run
+---
 
-**1. Start the Dashboard & API Server**
-```bash
-python main.py serve
-```
-Open `http://localhost:5000` in your browser.
+## 🛠️ Usage
 
-**2. Run the Scraper Standalone (CLI)**
-```bash
-python main.py scrape --parser books
-```
+1. **Target a Website:** Enter a target URL in the top navigation bar. The system will immediately validate the URL and verify if a parser exists.
+2. **Configure Settings:** Navigate to the **Workspace** tab to adjust timeouts, retry limits, and user-agent strings.
+3. **Start Scraping:** Click "Start Scraping". Monitor the pipeline execution in real-time through the progressive UI indicator.
+4. **Analyze Data:** View schema-aware charts in the **Analytics** tab and browse raw data in the **Data Explorer**.
+5. **Export:** Click the CSV or JSON buttons to download the sanitized dataset.
 
-## API Documentation
+---
 
-- `GET /api/data`: Returns scraped data (supports `?search=query`).
-- `GET /api/stats`: Returns pipeline execution statistics.
-- `GET /api/logs`: Returns recent log entries.
-- `POST /api/scrape`: Triggers a scrape run. Body: `{"parser": "books"}`.
-- `GET /api/config`: Reads current configuration.
-- `PUT /api/config`: Updates configuration at runtime.
-- `GET /api/export/csv`: Downloads the latest CSV.
-- `GET /api/export/json`: Downloads the latest JSON.
-- `GET /api/parsers`: Lists available parsers.
+## 📈 Future Scalability
 
-## Future Scalability
+The pipeline is designed with horizontal scalability in mind. Future upgrades could trivially introduce:
+- Distributed task queues (e.g., Celery + Redis).
+- Headless browser integration (e.g., Playwright) for JS-heavy targets.
+- Database persistence (PostgreSQL / MongoDB) replacing local file storage.
 
-To add support for a new website (e.g., Amazon):
-1. Create `scraper/amazon_parser.py`.
-2. Implement the `Parser` class with methods `get_columns()`, `get_dedup_keys()`, `get_next_page()`, and `parse_listing()`.
-3. Register it in `scraper/parser_loader.py` `PARSER_REGISTRY`.
-4. The dashboard, API, cleaner, and storage layers will automatically adapt to the new data schema.
+---
 
-## License
-MIT License
+*This project was engineered to demonstrate production-grade software development, architectural design patterns, and full-stack proficiency.*

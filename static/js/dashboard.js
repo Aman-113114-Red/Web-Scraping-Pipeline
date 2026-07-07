@@ -28,7 +28,8 @@
         CONFIG:  "/api/config",
         CSV:     "/api/export/csv",
         JSON:    "/api/export/json",
-        PARSERS: "/api/parsers",
+        REGISTRY:"/api/registry",
+        CHECK_URL:"/api/check-url",
     };
 
     const ROWS_PER_PAGE = 25;
@@ -43,6 +44,14 @@
         activeParser: "books",
         isRunning: false,
         lastStats: {},
+        sortColumn: null,
+        sortDirection: 1,
+        pipelineStage: 0,
+        scrapeStartTime: 0,
+        scrapeEstDuration: 30000,
+        registry: [],
+        urlStatus: "invalid",
+        urlReason: "Please enter a target URL",
     };
 
     // =====================================================================
@@ -53,7 +62,7 @@
 
     const dom = {
         themeToggle:    $("#themeToggle"),
-        parserSelect:   $("#parserSelect"),
+        targetUrl:      $("#targetUrl"),
         runScraper:     $("#runScraper"),
         searchInput:    $("#searchInput"),
         exportCsv:      $("#exportCsv"),
@@ -82,8 +91,6 @@
         valLastRun:     $("#valLastRun"),
 
         // Settings inputs
-        settingBaseUrl:   $("#settingBaseUrl"),
-        settingParser:    $("#settingParser"),
         settingTimeout:   $("#settingTimeout"),
         settingRetries:   $("#settingRetries"),
         settingUserAgent: $("#settingUserAgent"),
@@ -91,7 +98,223 @@
 
         // Nav items
         navItems: $$(".nav-item"),
+
+        // Pipeline
+        pipelinePercent: $("#pipelinePercent"),
+        pipelineElapsed: $("#pipelineElapsed"),
+        pipelineEstimated: $("#pipelineEstimated"),
+        pipelineStages: $$(".pipeline-stage"),
+        pipelineCurrentStage: $("#pipelineCurrentStage"),
+        
+        // Website Info Card
+        infoDomain: $("#infoDomain"),
+        infoStatus: $("#infoStatus"),
+        infoType: $("#infoType"),
+        infoProtection: $("#infoProtection"),
+        infoTotalRecords: $("#infoTotalRecords"),
+        infoLastScrape: $("#infoLastScrape"),
+        infoDuration: $("#infoDuration"),
+
+        // Workspace Metrics
+        wsLastScrape: $("#wsLastScrape"),
+        wsTotalScrapes: $("#wsTotalScrapes"),
+        wsAvgDuration: $("#wsAvgDuration"),
+        wsTotalRecords: $("#wsTotalRecords")
     };
+
+    // =====================================================================
+    async function initRegistry() {
+        try {
+            const res = await apiFetch(API.REGISTRY);
+            state.registry = res.registry || [];
+            updateDynamicUI(null); // set initial state
+        } catch (err) {
+            console.error("Failed to load registry", err);
+        }
+    }
+
+    function detectParser(url) {
+        if (!url) return null;
+        const normalized = url.toLowerCase();
+        for (const site of state.registry) {
+            if (normalized.includes(site.domain)) {
+                return site;
+            }
+        }
+        return null;
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    function clearDashboardSession(reason = "Website changed") {
+        // Overview cards
+        if (dom.valRecords) dom.valRecords.textContent = "0";
+        if (dom.valPages) dom.valPages.textContent = "0";
+        if (dom.valTime) dom.valTime.textContent = "0s";
+        if (dom.valDuplicates) dom.valDuplicates.textContent = "0";
+        
+        // Website Information (last run etc)
+        if (dom.valLastRun) dom.valLastRun.textContent = "Never";
+        if (dom.infoLastScrape) dom.infoLastScrape.textContent = "Never";
+        if (dom.infoTotalRecords) dom.infoTotalRecords.textContent = "0";
+        if (dom.infoDuration) dom.infoDuration.textContent = "0s";
+
+        // Current scrape statistics
+        if (dom.valStatus) {
+            dom.valStatus.textContent = "Idle";
+            dom.valStatus.className = "stat-value status-badge idle";
+        }
+        
+        // Data Explorer
+        state.data = [];
+        state.columns = [];
+        state.currentPage = 1;
+        state.totalPages = 1;
+        state.sortColumn = null;
+        
+        // Search
+        state.searchQuery = "";
+        if (dom.searchInput) dom.searchInput.value = "";
+        
+        // Selected rows
+        if (window.selectedRows) window.selectedRows = new Set();
+        if (typeof renderTable === "function") {
+            try { renderTable(); } catch(e) {}
+        }
+        
+        // Export buttons
+        if (dom.exportCsv) dom.exportCsv.disabled = true;
+        if (dom.exportJson) dom.exportJson.disabled = true;
+
+        // Analytics
+        state.lastStats = {};
+        if (typeof updateCharts === "function") {
+            try { updateCharts(); } catch(e) {}
+        }
+        
+        // Pipeline
+        if (typeof resetPipeline === "function") {
+            try { resetPipeline(); } catch(e) {}
+        }
+        
+        // Logs
+        if (dom.logsContainer) {
+            const div = document.createElement("div");
+            div.className = "log-entry log-info";
+            div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-module">[frontend]</span> <span class="log-message">${reason}. Dashboard cleared. Waiting for new scrape.</span>`;
+            dom.logsContainer.prepend(div);
+        }
+    }
+
+    async function checkUrlStatus(url) {
+        if (!url) {
+            updateUrlUI("invalid", "No URL provided.");
+            return;
+        }
+
+        try {
+            new URL(url);
+        } catch (_) {
+            updateUrlUI("invalid", "Malformed URL.");
+            return;
+        }
+
+        updateUrlUI("checking", "Connecting to website...");
+        
+        try {
+            const res = await apiFetch(API.CHECK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url }),
+            });
+            updateUrlUI(res.status, res.reason, res.parser);
+        } catch (err) {
+            updateUrlUI("unreachable", "Failed to connect to backend check service.");
+        }
+    }
+
+    function updateUrlUI(status, reason, parserName = null) {
+        state.urlStatus = status;
+        state.urlReason = reason;
+
+        if (parserName) {
+            state.activeParser = parserName;
+        }
+
+        const site = detectParser(dom.targetUrl.value);
+        updateDynamicUI(site); 
+
+        let statusText = "Checking...";
+        let statusColor = "text-muted";
+        let icon = "⚪";
+
+        if (status === "ready") {
+            statusText = "Ready to Scrape";
+            statusColor = "text-green";
+            icon = "🟢";
+        } else if (status === "cannot_scrape") {
+            statusText = "Cannot Scrape";
+            statusColor = "text-amber";
+            icon = "🛡";
+        } else if (status === "invalid") {
+            statusText = "Invalid URL";
+            statusColor = "text-red";
+            icon = "❌";
+        } else if (status === "unreachable") {
+            statusText = "Unreachable";
+            statusColor = "text-red";
+            icon = "🔴";
+        }
+
+        if (dom.infoStatus) {
+            dom.infoStatus.innerHTML = `${icon} ${statusText}`;
+            dom.infoStatus.className = `info-value ${statusColor}`;
+        }
+        if (dom.infoProtection) {
+            dom.infoProtection.textContent = reason || "None";
+        }
+    }
+
+    const onUrlInput = debounce((e) => {
+        clearDashboardSession();
+        checkUrlStatus(e.target.value);
+    }, 500);
+
+    function updateDynamicUI(site) {
+        const titleEl = document.getElementById("pageTitle");
+        const statLabels = document.querySelectorAll(".stat-label");
+
+        if (site) {
+            if (titleEl) titleEl.textContent = site.title || `${site.type} Dashboard`;
+            
+            // Update Overview Cards if provided by backend registry
+            if (site.overview_cards && site.overview_cards.length === 4 && statLabels.length === 4) {
+                statLabels[0].textContent = site.overview_cards[0];
+                statLabels[1].textContent = site.overview_cards[1];
+                statLabels[2].textContent = site.overview_cards[2];
+                statLabels[3].textContent = site.overview_cards[3];
+            }
+            
+            if (dom.infoDomain) dom.infoDomain.textContent = site.domain;
+            if (dom.infoType) dom.infoType.textContent = site.type;
+        } else {
+            if (titleEl) titleEl.textContent = "Scraping Pipeline — Dashboard";
+            if (statLabels.length === 4) {
+                statLabels[0].textContent = "Records Scraped";
+                statLabels[1].textContent = "Pages Crawled";
+                statLabels[2].textContent = "Execution Time";
+                statLabels[3].textContent = "Duplicates Removed";
+            }
+            if (dom.infoDomain) dom.infoDomain.textContent = "Unknown Domain";
+            if (dom.infoType) dom.infoType.textContent = "Unknown Site";
+        }
+    }
 
     // =====================================================================
     // Theme
@@ -115,7 +338,13 @@
     function showToast(message, type = "info") {
         const toast = document.createElement("div");
         toast.className = `toast ${type}`;
-        toast.textContent = message;
+        
+        let icon = "ℹ";
+        if (type === "success") icon = "✓";
+        if (type === "error") icon = "✕";
+        if (type === "warning") icon = "⚠";
+
+        toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
         dom.toastContainer.appendChild(toast);
         setTimeout(() => toast.remove(), 4000);
     }
@@ -228,33 +457,59 @@
     // Statistics
     // =====================================================================
     async function loadStats() {
+        showSkeletons(["valRecords", "valPages", "valTime", "valDuplicates"]);
         try {
             const stats = await apiFetch(API.STATS);
             // Store for charts to reference without an extra API call
             state.lastStats = stats;
 
-            dom.valRecords.textContent = (stats.records_scraped || 0).toLocaleString();
-            dom.valPages.textContent = (stats.pages_crawled || 0).toLocaleString();
-            dom.valTime.textContent = `${stats.execution_time || 0}s`;
-            dom.valDuplicates.textContent = (stats.duplicates_removed || 0).toLocaleString();
+            animateCounter(dom.valRecords, stats.records_scraped || 0);
+            animateCounter(dom.valPages, stats.pages_crawled || 0);
+            animateCounter(dom.valDuplicates, stats.duplicates_removed || 0);
+            
+            const timeObj = { val: 0 };
+            const startStr = dom.valTime.textContent.replace("s", "");
+            timeObj.val = isNaN(parseInt(startStr)) ? 0 : parseInt(startStr);
+            const targetTime = stats.execution_time || 0;
+            animateCounter(dom.valTime, targetTime, 1000, "s");
 
-            // Status badge — normalized values: idle | running | completed | failed
+            // Status badge
             const statusText = stats.status || "idle";
             dom.valStatus.textContent = capitalize(statusText);
             dom.valStatus.className = "stat-value status-badge";
+            dom.infoStatus.textContent = capitalize(statusText);
+            dom.infoStatus.className = "info-status";
+            
             if (statusText === "failed") {
                 dom.valStatus.classList.add("error");
+                dom.infoStatus.classList.add("failed");
             } else {
                 dom.valStatus.classList.add(statusText);
+                dom.infoStatus.classList.add(statusText);
             }
 
             // Last run
             if (stats.last_run) {
                 const d = new Date(stats.last_run);
                 dom.valLastRun.textContent = d.toLocaleTimeString();
+                dom.infoLastScrape.textContent = d.toLocaleString();
             } else {
                 dom.valLastRun.textContent = "Never";
+                dom.infoLastScrape.textContent = "Never";
             }
+            
+            // Website Info
+            dom.infoTotalRecords.textContent = (stats.records_scraped || 0).toLocaleString();
+            dom.infoDuration.textContent = `${stats.execution_time || 0}s`;
+            
+            const siteInfo = detectParser(state.activeParser) || { domain: "Unknown Domain", type: "Unknown Site", protection: "Unknown" };
+            // info bindings are now handled reactively by URL input, but we fallback here
+            if (stats.last_run) {
+                if (dom.wsTotalRecords) dom.wsTotalRecords.textContent = stats.total_records || 0;
+                if (dom.wsTotalScrapes) dom.wsTotalScrapes.textContent = stats.total_records ? 1 : 0; // Simple mock since backend doesn't track total scrapes
+                if (dom.wsAvgDuration) dom.wsAvgDuration.textContent = `${stats.execution_time || 0}s`;
+            }
+
         } catch (err) {
             showToast("Failed to load statistics", "error");
         }
@@ -299,19 +554,43 @@
 
         // --- Dynamic header ---
         const displayCols = columns.filter(c => !c.endsWith("_url") || c === "product_url" || c === "job_url" || c === "author_url");
-        dom.tableHead.innerHTML = `<tr>${displayCols.map((col) =>
-            `<th>${formatColumnName(col)}</th>`
-        ).join("")}</tr>`;
+        dom.tableHead.innerHTML = `<tr>${displayCols.map((col) => {
+            const isSort = state.sortColumn === col;
+            const arrow = isSort ? (state.sortDirection === 1 ? "▲" : "▼") : "↕";
+            return `<th class="sortable ${isSort ? "sort-active" : ""}" data-col="${col}">
+                ${formatColumnName(col)} <span class="sort-arrow">${arrow}</span>
+            </th>`;
+        }).join("")}</tr>`;
+
+        // Add sorting listeners
+        dom.tableHead.querySelectorAll("th.sortable").forEach((th) => {
+            th.addEventListener("click", () => sortTable(th.dataset.col));
+        });
 
         // --- Paginated rows ---
         const start = (currentPage - 1) * ROWS_PER_PAGE;
         const pageData = data.slice(start, start + ROWS_PER_PAGE);
 
-        dom.tableBody.innerHTML = pageData.map((row) =>
-            `<tr>${displayCols.map((col) => `<td>${formatCell(col, row[col])}</td>`).join("")}</tr>`
-        ).join("");
+        const fragment = document.createDocumentFragment();
+        pageData.forEach((row) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = displayCols.map((col) => {
+                const val = row[col];
+                const strVal = String(val !== null && val !== undefined ? val : "");
+                const isTruncated = strVal.length > 80;
+                return `<td${isTruncated ? ` title="${escapeHtml(strVal)}"` : ""}>${formatCell(col, val)}</td>`;
+            }).join("");
+            fragment.appendChild(tr);
+        });
+        
+        dom.tableBody.innerHTML = "";
+        dom.tableBody.appendChild(fragment);
 
         dom.recordCount.textContent = `${data.length} record${data.length !== 1 ? "s" : ""}`;
+
+        // Enable exports if we have data
+        if (dom.exportCsv) dom.exportCsv.disabled = false;
+        if (dom.exportJson) dom.exportJson.disabled = false;
 
         renderPagination();
     }
@@ -321,7 +600,15 @@
     }
 
     function formatCell(col, value) {
-        if (value === null || value === undefined) return '<span style="opacity:.4">—</span>';
+        if (value === null || value === undefined || value === "") return '<span style="opacity:.4">—</span>';
+
+        if (col === "status" || col.includes("state")) {
+            const low = String(value).toLowerCase();
+            let c = "badge-success";
+            if (low === "failed" || low === "error") c = "badge-danger";
+            else if (low === "pending" || low === "running") c = "badge-warning";
+            return `<span class="badge ${c}">${escapeHtml(String(value))}</span>`;
+        }
 
         // Render ratings as stars
         if (col === "rating" && typeof value === "number") {
@@ -333,15 +620,20 @@
             return `£${value}`;
         }
 
-        // Render URLs as links
+        // Render URLs as links with copy action
         if (col.endsWith("_url") && typeof value === "string" && value.startsWith("http")) {
-            return `<a href="${escapeHtml(value)}" target="_blank" rel="noopener">Link ↗</a>`;
+            return `<div class="link-actions">
+                <a href="${escapeHtml(value)}" target="_blank" rel="noopener">Link ↗</a>
+                <button class="copy-btn" title="Copy URL" onclick="navigator.clipboard.writeText('${escapeHtml(value)}')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+            </div>`;
         }
 
-        // Truncate long strings
+        // Truncate long strings (title added in renderTable)
         const str = String(value);
         if (str.length > 80) {
-            return `<span title="${escapeHtml(str)}">${escapeHtml(str.slice(0, 77))}…</span>`;
+            return escapeHtml(str.slice(0, 77)) + "…";
         }
 
         return escapeHtml(str);
@@ -429,45 +721,83 @@
     }
 
     function updateCharts() {
-        const { data, columns } = state;
+        const { data, columns, registry, activeParser } = state;
         if (!data.length) return;
 
         const colors = getChartColors();
+        const site = registry.find(s => s.parser === activeParser);
 
-        // --- Chart 1: Distribution (price or first numeric column) ---
-        updateDistributionChart(data, columns, colors);
+        if (site && site.charts && site.charts.length >= 2) {
+            renderDynamicChart(data, columns, colors, site.charts[0], "chartDistribution");
+            renderDynamicChart(data, columns, colors, site.charts[1], "chartRatings");
+        } else {
+            // Fallback to legacy
+            renderDynamicChart(data, columns, colors, {
+                title: "Value Distribution",
+                columns: ["price", "salary", columns[0]],
+                type: "bar"
+            }, "chartDistribution");
+            renderDynamicChart(data, columns, colors, {
+                title: "Category Distribution",
+                columns: ["rating", "author", "company", "category", "tags", columns[Math.min(1, columns.length - 1)]],
+                type: "doughnut"
+            }, "chartRatings");
+        }
 
-        // --- Chart 2: Ratings / category breakdown ---
-        updateCategoryChart(data, columns, colors);
-
-        // --- Chart 3: Records per page (simulated from data chunks) ---
         updatePerPageChart(data, colors);
-
-        // --- Chart 4: Request results (success vs failed) ---
         updateRequestsChart(colors);
     }
 
-    function updateDistributionChart(data, columns, colors) {
-        const canvas = document.getElementById("chartDistribution");
+    function renderDynamicChart(data, columns, colors, config, canvasId) {
+        const canvas = document.getElementById(canvasId);
         const ctx = canvas.getContext("2d");
 
-        // Find numeric column (price, salary, etc.)
-        let numericCol = null;
-        let label = "Value";
-        if (columns.includes("price")) { numericCol = "price"; label = "Price (£)"; }
-        else if (columns.includes("salary")) { numericCol = "salary"; label = "Salary"; }
+        const chartKey = canvasId === "chartDistribution" ? "distribution" : "ratings";
+        if (state.charts[chartKey]) state.charts[chartKey].destroy();
 
-        if (state.charts.distribution) state.charts.distribution.destroy();
+        // Find the first column in the fallback list that exists and has data
+        let targetCol = null;
+        for (const col of config.columns) {
+            if (columns.includes(col) && data.some(r => r[col] !== "" && r[col] !== "N/A" && r[col] != null)) {
+                targetCol = col;
+                break;
+            }
+        }
 
-        if (numericCol) {
-            const values = data.map((r) => parseFloat(r[numericCol]) || 0).filter((v) => v > 0);
-            // Create bins
+        if (!targetCol) {
+            // Draw empty state
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "14px Inter, sans-serif";
+            ctx.fillStyle = colors.text;
+            ctx.textAlign = "center";
+            ctx.fillText("Data unavailable for this chart", canvas.width / 2, canvas.height / 2);
+            return;
+        }
+
+        // If numeric config and we have mostly numeric data
+        const isNumeric = config.numeric && data.some(r => parseFloat(r[targetCol]));
+        
+        let labels, datasetData;
+        let chartType = config.type || "bar";
+        let palette = [colors.blue, colors.purple, colors.cyan, colors.green, colors.amber, colors.red, "#8b5cf6", "#ec4899"];
+
+        if (isNumeric) {
+            const values = data.map((r) => parseFloat(r[targetCol]) || 0).filter((v) => v > 0);
+            if (values.length === 0) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "14px Inter, sans-serif";
+                ctx.fillStyle = colors.text;
+                ctx.textAlign = "center";
+                ctx.fillText("Data unavailable for this chart", canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
             const min = Math.floor(Math.min(...values));
             const max = Math.ceil(Math.max(...values));
             const binCount = Math.min(10, max - min + 1);
             const binSize = (max - min) / binCount;
             const bins = Array(binCount).fill(0);
-            const labels = [];
+            labels = [];
 
             for (let i = 0; i < binCount; i++) {
                 const lo = (min + i * binSize).toFixed(0);
@@ -480,95 +810,49 @@
                 if (idx >= binCount) idx = binCount - 1;
                 bins[idx]++;
             });
-
-            state.charts.distribution = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels,
-                    datasets: [{
-                        label,
-                        data: bins,
-                        backgroundColor: colors.blueAlpha,
-                        borderColor: colors.blue,
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    }],
-                },
-                options: chartOptions(colors, label + " Distribution"),
-            });
+            datasetData = bins;
         } else {
-            // For non-numeric data, show frequency of first column
-            const col = columns[0];
             const freq = {};
             data.forEach((r) => {
-                const key = String(r[col] || "").slice(0, 30);
+                const key = String(r[targetCol] || "Unknown").slice(0, 30);
                 freq[key] = (freq[key] || 0) + 1;
             });
-            const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10);
-
-            state.charts.distribution = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: sorted.map((s) => s[0]),
-                    datasets: [{
-                        label: formatColumnName(col),
-                        data: sorted.map((s) => s[1]),
-                        backgroundColor: colors.blueAlpha,
-                        borderColor: colors.blue,
-                        borderWidth: 1,
-                        borderRadius: 6,
-                    }],
-                },
-                options: chartOptions(colors, `${formatColumnName(col)} Frequency`),
-            });
+            const limit = chartType === "doughnut" ? 8 : 10;
+            const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, limit);
+            labels = sorted.map(s => s[0]);
+            datasetData = sorted.map(s => s[1]);
         }
-    }
 
-    function updateCategoryChart(data, columns, colors) {
-        const canvas = document.getElementById("chartRatings");
-        const ctx = canvas.getContext("2d");
+        const baseColor = canvasId === "chartDistribution" ? colors.blue : colors.purple;
+        const bgColors = chartType === "doughnut" ? palette.slice(0, labels.length).map(c => c + "99") : baseColor + "66";
+        const borderColors = chartType === "doughnut" ? palette.slice(0, labels.length) : baseColor;
 
-        if (state.charts.ratings) state.charts.ratings.destroy();
-
-        // Pick a categorical column
-        let catCol = null;
-        if (columns.includes("rating")) catCol = "rating";
-        else if (columns.includes("author")) catCol = "author";
-        else if (columns.includes("company")) catCol = "company";
-        else if (columns.includes("category")) catCol = "category";
-        else if (columns.includes("tags")) catCol = "tags";
-        else catCol = columns[Math.min(1, columns.length - 1)];
-
-        const freq = {};
-        data.forEach((r) => {
-            const key = String(r[catCol] || "Unknown").slice(0, 30);
-            freq[key] = (freq[key] || 0) + 1;
-        });
-        const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 8);
-
-        const palette = [colors.blue, colors.purple, colors.cyan, colors.green, colors.amber, colors.red, "#8b5cf6", "#ec4899"];
-
-        state.charts.ratings = new Chart(ctx, {
-            type: "doughnut",
-            data: {
-                labels: sorted.map((s) => s[0]),
-                datasets: [{
-                    data: sorted.map((s) => s[1]),
-                    backgroundColor: palette.slice(0, sorted.length).map(c => c + "99"),
-                    borderColor: palette.slice(0, sorted.length),
-                    borderWidth: 2,
-                }],
-            },
-            options: {
+        let options = chartOptions(colors, config.title);
+        if (chartType === "doughnut") {
+            options = {
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
-                    legend: {
-                        position: "bottom",
-                        labels: { color: colors.text, padding: 12, usePointStyle: true, font: { size: 11 } },
-                    },
+                    title: { display: true, text: config.title, color: colors.text, font: { family: "'Inter', sans-serif", size: 14, weight: 600 } },
+                    legend: { position: "bottom", labels: { color: colors.text, padding: 12, usePointStyle: true, font: { size: 11 } } },
                 },
+            };
+        }
+
+        state.charts[chartKey] = new Chart(ctx, {
+            type: chartType,
+            data: {
+                labels,
+                datasets: [{
+                    label: formatColumnName(targetCol),
+                    data: datasetData,
+                    backgroundColor: bgColors,
+                    borderColor: borderColors,
+                    borderWidth: chartType === "doughnut" ? 2 : 1,
+                    borderRadius: chartType === "bar" ? 6 : 0,
+                }],
             },
+            options
         });
     }
 
@@ -673,6 +957,8 @@
     // =====================================================================
     // Logs
     // =====================================================================
+    let activeLogFilter = "ALL";
+
     async function loadLogs() {
         try {
             const res = await apiFetch(`${API.LOGS}?limit=200`);
@@ -682,8 +968,15 @@
                 dom.logsContainer.innerHTML = '<div class="log-empty">Logs will appear here after a scrape run.</div>';
                 return;
             }
+            
+            const filteredLogs = activeLogFilter === "ALL" ? logs : logs.filter(l => (l.level || "").toUpperCase() === activeLogFilter);
 
-            dom.logsContainer.innerHTML = logs.map((log) => `
+            if (!filteredLogs.length) {
+                dom.logsContainer.innerHTML = `<div class="log-empty">No ${activeLogFilter} logs found.</div>`;
+                return;
+            }
+
+            dom.logsContainer.innerHTML = filteredLogs.map((log) => `
                 <div class="log-entry">
                     <span class="log-level ${log.level}">${log.level}</span>
                     <span class="log-time">${(log.timestamp || "").slice(11, 19)}</span>
@@ -691,10 +984,25 @@
                 </div>
             `).join("");
 
-            dom.logsContainer.scrollTop = dom.logsContainer.scrollHeight;
+            // Auto-scroll
+            requestAnimationFrame(() => {
+                dom.logsContainer.scrollTop = dom.logsContainer.scrollHeight;
+            });
         } catch (err) {
             showToast("Failed to load logs", "error");
         }
+    }
+
+    function initLogFilters() {
+        const filterBtns = document.querySelectorAll(".log-filter-btn");
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                filterBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                activeLogFilter = btn.dataset.level;
+                loadLogs();
+            });
+        });
     }
 
     // =====================================================================
@@ -703,12 +1011,10 @@
     async function loadSettings() {
         try {
             const config = await apiFetch(API.CONFIG);
-            dom.settingBaseUrl.value = config.base_url || "";
-            dom.settingParser.value = config.active_parser || "books";
-            dom.settingTimeout.value = config.timeout || 30;
-            dom.settingRetries.value = config.max_retries || 3;
-            dom.settingUserAgent.value = config.user_agent || "";
-            dom.settingDelay.value = config.request_delay || 1;
+            if (dom.settingTimeout) dom.settingTimeout.value = config.timeout || 30;
+            if (dom.settingRetries) dom.settingRetries.value = config.max_retries || 3;
+            if (dom.settingUserAgent) dom.settingUserAgent.value = config.user_agent || "";
+            if (dom.settingDelay) dom.settingDelay.value = config.request_delay || 1;
         } catch (err) {
             showToast("Failed to load settings", "error");
         }
@@ -716,8 +1022,6 @@
 
     async function saveSettings() {
         const payload = {
-            base_url: dom.settingBaseUrl.value,
-            active_parser: dom.settingParser.value,
             timeout: dom.settingTimeout.value,
             max_retries: dom.settingRetries.value,
             user_agent: dom.settingUserAgent.value,
@@ -730,13 +1034,9 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-            showToast("Settings saved successfully", "success");
-
-            // Sync parser selector
-            dom.parserSelect.value = dom.settingParser.value;
-            state.activeParser = dom.settingParser.value;
+            showToast("Preferences saved successfully", "success");
         } catch (err) {
-            showToast(`Failed to save settings: ${err.message}`, "error");
+            showToast(`Failed to save preferences: ${err.message}`, "error");
         }
     }
 
@@ -744,93 +1044,318 @@
     // Scraper
     // =====================================================================
     async function runScraper() {
-        // Guard: prevent overlapping scrape requests
         if (state.isRunning) return;
 
+        if (state.urlStatus !== "ready") {
+            showToast(`Cannot start: ${state.urlReason}`, "error");
+            const div = document.createElement("div");
+            div.className = "log-entry log-error";
+            div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span class="log-module">[frontend]</span> <span class="log-message">Scraping aborted: ${state.urlReason}</span>`;
+            if (dom.logsContainer) dom.logsContainer.prepend(div);
+            return;
+        }
+
+        const url = dom.targetUrl.value.trim();
+        const site = detectParser(url);
+        if (!site) {
+            showToast("Website not supported in registry. Try books.toscrape.com", "error");
+            return;
+        }
+
+        state.activeParser = site.parser;
         state.isRunning = true;
         dom.runScraper.disabled = true;
-        dom.runScraper.classList.add("disabled");
+        dom.runScraper.classList.add("loading");
+        
+        clearDashboardSession("New scrape started");
         showLoading();
         showToast("Scraping started…", "info");
 
+        // Update info card immediately for visual feedback
+        dom.infoDomain.textContent = site.domain;
+        dom.infoType.textContent = site.type;
+        dom.infoProtection.textContent = site.protection;
+        dom.infoStatus.textContent = "Running";
+        dom.infoStatus.className = "info-status running";
+
+        // Start elapsed timer
+        state.scrapeStartTime = Date.now();
+        const estTimer = setInterval(() => {
+            const elapsedMs = Date.now() - state.scrapeStartTime;
+            const elapsedSec = Math.floor(elapsedMs / 1000);
+            dom.pipelineElapsed.textContent = `${elapsedSec}s`;
+            
+            let estRemaining = Math.max(0, Math.floor(state.scrapeEstDuration / 1000) - elapsedSec);
+            dom.pipelineEstimated.textContent = `~${estRemaining}s`;
+            
+            const prog = Math.min(95, (elapsedMs / state.scrapeEstDuration) * 100);
+            dom.pipelinePercent.textContent = `${Math.floor(prog)}%`;
+            
+            const stageProgress = Math.floor((prog / 100) * 10);
+            advancePipeline(stageProgress);
+        }, 1000);
+
         try {
-            // No retries for the scrape POST — avoids triggering duplicate runs
-            // if the response is lost after the scrape already completed.
             const res = await apiFetch(API.SCRAPE, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    parser: state.activeParser,
-                }),
+                body: JSON.stringify({ parser: state.activeParser }),
             }, 0);
 
-            showToast(`Scraping complete! ${res.stats.records_scraped} records scraped.`, "success");
+            if (res.stats && res.stats.status === "protected") {
+                dom.pipelineCurrentStage.innerHTML = `
+                <div style="text-align:center; padding: 10px;">
+                    <span style="font-size:2em; display:block; margin-bottom:5px;">🛡</span>
+                    <strong style="color:var(--amber-500); font-size:1.1em; display:block; margin-bottom:5px;">Anti Bot Protection Detected</strong>
+                    <span style="color:var(--text-muted); font-size:0.9em; display:block; margin-bottom:10px;">This website blocks automated scraping.</span>
+                    <button class="btn btn-secondary" onclick="document.getElementById('targetUrl').focus()" style="font-size:0.8em;">Try Another Supported Website</button>
+                </div>
+            `;
+            } else if (res.stats && res.stats.status === "failed") {
+                dom.pipelineCurrentStage.innerHTML = `
+                <div style="text-align:center; padding: 10px;">
+                    <span style="font-size:2em; display:block; margin-bottom:5px;">❌</span>
+                    <strong style="color:var(--red-500); font-size:1.1em; display:block; margin-bottom:5px;">Scrape Failed</strong>
+                    <span style="color:var(--text-muted); font-size:0.9em; display:block; margin-bottom:10px;">${res.error || "An unknown error occurred during execution."}</span>
+                    <button class="btn btn-secondary" onclick="document.getElementById('runScraper').click()" style="font-size:0.8em;">Retry Scrape</button>
+                </div>
+            `;
+            } else {
+                clearInterval(estTimer);
+                dom.pipelinePercent.textContent = "100%";
+                dom.pipelineEstimated.textContent = "Done";
+                advancePipeline(10); // Completed
 
-            // Sequential refresh: Overview → Data Explorer → Analytics → Logs
-            // Each section waits for the previous one to finish before requesting.
-            // This ensures all sections read from the same completed _state and
-            // prevents the race condition that caused intermittent blank sections.
-            await loadStats();
-            await loadData();
-            updateCharts();
-            await loadLogs();
+                showToast(`Scraping complete! ${res.stats.records_scraped} records scraped.`, "success");
+
+                const actualDuration = Date.now() - state.scrapeStartTime;
+                state.scrapeEstDuration = (state.scrapeEstDuration * 0.5) + (actualDuration * 0.5);
+
+                await loadStats();
+                await loadData();
+                updateCharts();
+                await loadLogs();
+            }
+            
+            setTimeout(hideLoading, 1000);
         } catch (err) {
+            clearInterval(estTimer);
             showToast(`Scraping failed: ${err.message}`, "error");
+            hideLoading();
         } finally {
             state.isRunning = false;
             dom.runScraper.disabled = false;
-            dom.runScraper.classList.remove("disabled");
-            hideLoading();
+            dom.runScraper.classList.remove("loading");
         }
     }
 
     // =====================================================================
     // Export
     // =====================================================================
-    function exportCsv() {
-        window.open(API.CSV, "_blank");
-    }
-
-    function exportJson() {
-        window.open(API.JSON, "_blank");
-    }
-
-    // =====================================================================
-    // Parser Selection
-    // =====================================================================
-    async function loadParsers() {
+    async function handleExport(url, ext) {
+        if (!state.data || !state.data.length) return;
         try {
-            const res = await apiFetch(API.PARSERS);
-            const parsers = res.parsers || [];
-            const active = res.active || "books";
-
-            // Update both selectors
-            [dom.parserSelect, dom.settingParser].forEach((sel) => {
-                sel.innerHTML = parsers.map((p) =>
-                    `<option value="${p.name}" ${p.name === active ? "selected" : ""}>${p.display_name}</option>`
-                ).join("");
-            });
-
-            state.activeParser = active;
-        } catch (err) {
-            showToast("Failed to load parsers", "error");
+            showToast(`Generating ${ext.toUpperCase()} export...`, "info");
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Export failed");
+            const blob = await res.blob();
+            
+            const a = document.createElement("a");
+            const objUrl = window.URL.createObjectURL(blob);
+            const ts = new Date().toISOString().split("T")[0];
+            const siteName = state.activeParser ? capitalize(state.activeParser) : "Data";
+            
+            a.href = objUrl;
+            a.download = `${siteName}_Export_${ts}.${ext}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(objUrl);
+            
+            showToast(`${ext.toUpperCase()} exported successfully!`, "success");
+        } catch(e) {
+            showToast(`Error exporting ${ext.toUpperCase()}`, "error");
         }
     }
 
-    function onParserChange(e) {
-        state.activeParser = e.target.value;
+    function exportCsv() {
+        handleExport(API.CSV, "csv");
+    }
 
-        // Also sync the settings parser select
-        dom.settingParser.value = state.activeParser;
+    function exportJson() {
+        handleExport(API.JSON, "json");
+    }
 
-        // Update config on server
-        apiFetch(API.CONFIG, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ active_parser: state.activeParser }),
-        }).then(() => {
-            showToast(`Switched to ${capitalize(state.activeParser)} parser`, "info");
-        }).catch(() => {});
+    // =====================================================================
+    // UI Helpers (Pipeline, Skeletons, Animations, Sorting)
+    // =====================================================================
+    function resetPipeline() {
+        state.pipelineStage = 0;
+        dom.pipelinePercent.textContent = "0 / 11 Stages Completed";
+        dom.pipelineElapsed.textContent = "0s";
+        dom.pipelineEstimated.textContent = `~${Math.floor(state.scrapeEstDuration / 1000)}s`;
+        dom.pipelineCurrentStage.textContent = "Initializing...";
+        
+        dom.pipelineStages.forEach(el => {
+            el.className = "pipeline-stage";
+            const status = el.querySelector(".stage-status");
+            const ctx = el.querySelector(".stage-context");
+            const dot = el.querySelector(".stage-dot");
+            if (status) status.textContent = "";
+            if (ctx) ctx.textContent = "";
+            if (dot) dot.classList.remove("pop");
+        });
+        
+        $$(".stage-connector").forEach(el => el.className = "stage-connector");
+        if (dom.pipelineStages[5] && dom.pipelineStages[5].nextElementSibling) {
+            dom.pipelineStages[5].nextElementSibling.classList.add("bridge-down");
+        }
+        
+        if (dom.pipelineStages.length > 0) {
+            dom.pipelineStages[0].classList.add("active");
+            const st = dom.pipelineStages[0].querySelector(".stage-status");
+            if (st) st.textContent = "Running";
+            dom.pipelineCurrentStage.textContent = dom.pipelineStages[0].querySelector(".stage-label").textContent;
+            dom.pipelinePercent.textContent = "1 / 11 Stages Completed";
+        }
+        
+        const connectors = $$(".stage-connector");
+        if (connectors.length > 0) connectors[0].classList.add("active");
+    }
+
+    function advancePipeline(stageIdx) {
+        if (stageIdx <= state.pipelineStage) return;
+        const connectors = $$(".stage-connector");
+        
+        // Progress immediately the stages up to the new one
+        for (let i = state.pipelineStage; i < stageIdx; i++) {
+            const prev = dom.pipelineStages[i];
+            const conn = connectors[i];
+            
+            if (prev) {
+                // Step 1: Complete previous stage
+                prev.className = "pipeline-stage complete";
+                const st = prev.querySelector(".stage-status");
+                const ctx = prev.querySelector(".stage-context");
+                const dot = prev.querySelector(".stage-dot");
+                if (st) st.textContent = "Done";
+                if (ctx) ctx.textContent = "";
+                
+                // Add pop animation
+                if (dot) {
+                    dot.classList.add("pop");
+                    setTimeout(() => dot.classList.remove("pop"), 400);
+                }
+            }
+            if (conn) {
+                conn.classList.remove("active");
+                conn.classList.add("complete");
+            }
+        }
+        
+        state.pipelineStage = stageIdx;
+        const total = dom.pipelineStages.length;
+        dom.pipelinePercent.textContent = `${Math.min(stageIdx + 1, total)} / ${total} Stages Completed`;
+        
+        const nextStage = dom.pipelineStages[stageIdx];
+        const nextConn = connectors[stageIdx];
+        
+        if (nextStage) {
+            if (stageIdx === total - 1) {
+                nextStage.className = "pipeline-stage complete";
+                const st = nextStage.querySelector(".stage-status");
+                const dot = nextStage.querySelector(".stage-dot");
+                if (st) st.textContent = "Done";
+                if (dot) {
+                    dot.classList.add("pop");
+                    setTimeout(() => dot.classList.remove("pop"), 400);
+                }
+                dom.pipelineCurrentStage.textContent = "Completed";
+            } else {
+                // Staggered Animation Sequence
+                // Step 2: Connector animates to blue
+                if (nextConn) setTimeout(() => nextConn.classList.add("active"), 150);
+                
+                // Step 3: Next stage scales slightly (preparing)
+                setTimeout(() => nextStage.classList.add("preparing"), 300);
+                
+                // Step 4 & 5: Active glow & pulse
+                setTimeout(() => nextStage.classList.add("active"), 450);
+                
+                // Step 6: Status to Running
+                setTimeout(() => {
+                    const st = nextStage.querySelector(".stage-status");
+                    const ctx = nextStage.querySelector(".stage-context");
+                    if (st) st.textContent = "Running";
+                    if (ctx) {
+                        if (stageIdx === 3) ctx.textContent = "Page " + Math.floor(Math.random() * 5 + 1) + " / 50";
+                        else if (stageIdx === 4) ctx.textContent = Math.floor(Math.random() * 200 + 100) + " Records";
+                        else if (stageIdx === 5 || stageIdx === 6) ctx.textContent = "Removing duplicates";
+                        else if (stageIdx === 7 || stageIdx === 8) ctx.textContent = "Writing output";
+                        else ctx.textContent = "";
+                    }
+                    dom.pipelineCurrentStage.textContent = nextStage.querySelector(".stage-label").textContent;
+                }, 600);
+            }
+        }
+    }
+
+    function showSkeletons(ids) {
+        ids.forEach(id => {
+            if (dom[id]) dom[id].innerHTML = '<span class="skeleton-line"></span>';
+        });
+    }
+
+    function animateCounter(el, target, duration = 1000, suffix = "") {
+        if (!el) return;
+        const startStr = el.textContent.replace(/,/g, "").replace(suffix, "");
+        const start = parseInt(startStr) || 0;
+        const change = target - start;
+        if (change === 0) {
+            el.textContent = target.toLocaleString() + suffix;
+            return;
+        }
+
+        const startTime = performance.now();
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            const current = Math.floor(start + change * ease);
+            el.textContent = current.toLocaleString() + suffix;
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            } else {
+                el.textContent = target.toLocaleString() + suffix;
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    function sortTable(col) {
+        if (state.sortColumn === col) {
+            state.sortDirection *= -1;
+        } else {
+            state.sortColumn = col;
+            state.sortDirection = 1;
+        }
+        
+        state.data.sort((a, b) => {
+            let valA = a[col];
+            let valB = b[col];
+            if (valA === null || valA === undefined) valA = "";
+            if (valB === null || valB === undefined) valB = "";
+            
+            if (!isNaN(valA) && !isNaN(valB) && valA !== "" && valB !== "") {
+                return (Number(valA) - Number(valB)) * state.sortDirection;
+            }
+            return String(valA).localeCompare(String(valB)) * state.sortDirection;
+        });
+
+        state.currentPage = 1;
+        renderTable();
     }
 
     // =====================================================================
@@ -838,6 +1363,7 @@
     // =====================================================================
     function init() {
         initTheme();
+        initRegistry();
         initNav();
         initMobileMenu();
         initSearch();
@@ -849,17 +1375,21 @@
         dom.exportJson.addEventListener("click", exportJson);
         dom.refreshLogs.addEventListener("click", loadLogs);
         dom.saveSettings.addEventListener("click", saveSettings);
-        dom.parserSelect.addEventListener("change", onParserChange);
+        dom.targetUrl.addEventListener("input", onUrlInput);
 
         // Initial data load
-        loadParsers();
         loadSettings();
+        initLogFilters();
+        
         // Load stats and data in parallel, then render charts once both are ready.
         // This ensures updateCharts() has access to both state.data and state.lastStats.
         Promise.all([loadStats(), loadData()])
             .then(() => updateCharts())
             .catch(() => {}); // Individual errors already handled with toasts
         loadLogs();
+        
+        // Initial button state
+        clearDashboardSession("Application loaded");
     }
 
     // Start when DOM is ready

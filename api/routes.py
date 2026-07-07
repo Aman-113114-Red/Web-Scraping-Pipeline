@@ -14,7 +14,7 @@ Endpoints
   PUT  /api/config         — Update configuration
   GET  /api/export/csv     — Download CSV file
   GET  /api/export/json    — Download JSON file
-  GET  /api/parsers        — List available parsers with columns
+  GET  /api/registry       — List all supported websites from registry
 
 Response Format
 ---------------
@@ -27,13 +27,14 @@ All JSON endpoints return a consistent envelope:
 import time
 import threading
 import json
+import requests
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from flask import Blueprint, jsonify, request, send_file
 
 from config.settings import Settings
-from scraper.fetcher import Fetcher
+from scraper.fetcher import Fetcher, AntiBotException
 from scraper.parser_loader import load_parser, get_available_parsers
 from scraper.cleaner import Cleaner
 from scraper.deduplicator import Deduplicator
@@ -260,6 +261,17 @@ def _run_scraper(parser_name: Optional[str] = None, base_url: Optional[str] = No
         )
         return _state["stats"]
 
+    except AntiBotException as exc:
+        elapsed = round(time.time() - start_time, 2)
+        with _lock:
+            _state["stats"]["status"] = "protected"
+            _state["stats"]["execution_time"] = elapsed
+            _state["stats"]["last_run"] = timestamp_now()
+            _state["is_running"] = False
+            _state["scrape_error"] = str(exc)
+        logger.error("Scrape protected (Anti-Bot): %s", exc)
+        return _state["stats"]
+
     except Exception as exc:
         elapsed = round(time.time() - start_time, 2)
         with _lock:
@@ -376,7 +388,48 @@ def trigger_scrape():
         return _error(str(exc))
 
 
-@api_bp.route("/scrape/status", methods=["GET"])
+@api_bp.route("/check-url", methods=["POST"])
+def check_url():
+    """
+    Perform a pre-flight check on a URL.
+    Returns status: ready, cannot_scrape, invalid, unreachable
+    with a specific reason string.
+    """
+    body = request.get_json(silent=True) or {}
+    url = body.get("url", "").strip()
+    if not url:
+        return _success({"status": "invalid", "reason": "No URL provided."})
+
+    # Validate against registry
+    parsers = get_available_parsers()
+    matched = next((p for p in parsers if p["domain"] in url.lower()), None)
+    
+    if not matched:
+        return _success({"status": "cannot_scrape", "reason": "No compatible parser available."})
+
+    # Connectivity Check
+    try:
+        # 3 second timeout for pre-flight
+        res = requests.get(url, timeout=3, headers={"User-Agent": Settings.USER_AGENT})
+        
+        # Check HTTP status codes
+        if res.status_code in (403, 429):
+            return _success({"status": "cannot_scrape", "reason": "Anti-bot protection detected."})
+        if res.status_code >= 400:
+            return _success({"status": "cannot_scrape", "reason": f"Access denied (HTTP {res.status_code})."})
+
+        # Check HTML content
+        text_lower = res.text.lower()
+        if "cloudflare" in text_lower or "captcha" in text_lower or "verification required" in text_lower:
+            if len(res.text) < 50000:
+                return _success({"status": "cannot_scrape", "reason": "Cloudflare challenge detected."})
+        
+        return _success({"status": "ready", "reason": "Website is supported and reachable.", "parser": matched["parser"]})
+
+    except requests.exceptions.RequestException:
+        return _success({"status": "unreachable", "reason": "Network error or timeout."})
+    except Exception as e:
+        return _success({"status": "cannot_scrape", "reason": f"Unexpected error: {str(e)}"})
 def get_scrape_status():
     """Return the current scraping status (lightweight status check)."""
     return _success({
@@ -442,11 +495,11 @@ def export_json_endpoint():
     return send_file(json_path, as_attachment=True, mimetype="application/json")
 
 
-@api_bp.route("/parsers", methods=["GET"])
-def list_parsers():
-    """List all available parsers with their metadata and columns."""
-    parsers = get_available_parsers()
+@api_bp.route("/registry", methods=["GET"])
+def get_registry():
+    """List all available websites configured in the registry."""
+    registry = get_available_parsers()
     return _success({
-        "parsers": parsers,
+        "registry": registry,
         "active": Settings.ACTIVE_PARSER,
     })
