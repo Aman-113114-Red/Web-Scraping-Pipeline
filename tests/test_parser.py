@@ -34,7 +34,7 @@ def test_books_parser_parse_listing():
     '''
     soup = BeautifulSoup(html, "html.parser")
     parser = BooksParser()
-    records = parser.parse_listing(soup)
+    records = parser.parse_listing(soup, "https://books.toscrape.com/catalogue/category/books/fiction_10/index.html")
 
     assert len(records) == 1
     book = records[0]
@@ -60,7 +60,7 @@ def test_quotes_parser_parse_listing():
     '''
     soup = BeautifulSoup(html, "html.parser")
     parser = QuotesParser()
-    records = parser.parse_listing(soup)
+    records = parser.parse_listing(soup, "https://quotes.toscrape.com/page/1/")
 
     assert len(records) == 1
     quote = records[0]

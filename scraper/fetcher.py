@@ -10,7 +10,7 @@ Handles all HTTP communication:
 """
 
 import time
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -94,7 +94,7 @@ class Fetcher:
         self,
         start_url: str,
         next_page_callback,
-    ) -> List[BeautifulSoup]:
+    ) -> List[Tuple[str, BeautifulSoup]]:
         """
         Fetch every page starting from *start_url*.
 
@@ -108,10 +108,10 @@ class Fetcher:
 
         Returns
         -------
-        list of BeautifulSoup
-            All successfully fetched page trees.
+        list of tuple
+            List of (url, BeautifulSoup) tuples for all successfully fetched pages.
         """
-        pages: List[BeautifulSoup] = []
+        pages: List[Tuple[str, BeautifulSoup]] = []
         current_url: Optional[str] = start_url
 
         while current_url:
@@ -120,7 +120,7 @@ class Fetcher:
                 logger.warning("Stopping pagination — failed to fetch %s", current_url)
                 break
 
-            pages.append(soup)
+            pages.append((current_url, soup))
             logger.info("Page %d fetched", len(pages))
 
             next_url = next_page_callback(soup, current_url)

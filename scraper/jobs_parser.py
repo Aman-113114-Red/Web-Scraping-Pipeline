@@ -78,7 +78,7 @@ class Parser:
         #     return build_absolute_url(current_url, next_btn["href"])
         return None
 
-    def parse_listing(self, soup: BeautifulSoup) -> List[Dict[str, Any]]:
+    def parse_listing(self, soup: BeautifulSoup, current_url: str) -> List[Dict[str, Any]]:
         """
         Parse a single page and return a list of job records.
 
@@ -89,6 +89,8 @@ class Parser:
         ----------
         soup : BeautifulSoup
             Parsed HTML of a jobs listing page.
+        current_url : str
+            URL of the current page.
 
         Returns
         -------
@@ -110,7 +112,7 @@ class Parser:
 
         for card in job_cards:
             try:
-                record = self._parse_job_card(card)
+                record = self._parse_job_card(card, current_url)
                 if record:
                     records.append(record)
             except Exception as exc:
@@ -122,7 +124,7 @@ class Parser:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
-    def _parse_job_card(self, card) -> Optional[Dict[str, Any]]:
+    def _parse_job_card(self, card, current_url: str) -> Optional[Dict[str, Any]]:
         """
         Parse a single job listing element.
 
@@ -141,7 +143,7 @@ class Parser:
         salary = clean_whitespace(salary_tag.get_text()) if salary_tag else "N/A"
         job_url = ""
         if link_tag and link_tag.get("href"):
-            job_url = build_absolute_url(self.base_url, link_tag["href"])
+            job_url = build_absolute_url(current_url, link_tag["href"])
         posted_date = clean_whitespace(date_tag.get_text()) if date_tag else "N/A"
 
         return {

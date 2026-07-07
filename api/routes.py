@@ -204,8 +204,8 @@ def _run_scraper(parser_name: Optional[str] = None, base_url: Optional[str] = No
 
         # 3. Parse all pages
         all_records: List[Dict[str, Any]] = []
-        for page_soup in pages:
-            records = parser.parse_listing(page_soup)
+        for page_url, page_soup in pages:
+            records = parser.parse_listing(page_soup, page_url)
             all_records.extend(records)
 
         logger.info("Parsed %d raw records from %d pages", len(all_records), len(pages))

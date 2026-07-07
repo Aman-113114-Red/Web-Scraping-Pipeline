@@ -80,7 +80,7 @@ class Parser:
             return build_absolute_url(current_url, next_btn["href"])
         return None
 
-    def parse_listing(self, soup: BeautifulSoup) -> List[Dict[str, Any]]:
+    def parse_listing(self, soup: BeautifulSoup, current_url: str) -> List[Dict[str, Any]]:
         """
         Parse a single listing page and return a list of book records.
 
@@ -88,6 +88,8 @@ class Parser:
         ----------
         soup : BeautifulSoup
             Parsed HTML of a catalogue page.
+        current_url : str
+            URL of the current page.
 
         Returns
         -------
@@ -106,7 +108,7 @@ class Parser:
 
         for article in articles:
             try:
-                record = self._parse_article(article, category)
+                record = self._parse_article(article, category, current_url)
                 if record:
                     records.append(record)
             except Exception as exc:
@@ -122,6 +124,7 @@ class Parser:
         self,
         article: Tag,
         default_category: str,
+        current_url: str,
     ) -> Optional[Dict[str, Any]]:
         """Parse a single ``<article class="product_pod">`` element."""
         # Title & URL
@@ -131,7 +134,11 @@ class Parser:
 
         title = clean_whitespace(title_tag.get("title", title_tag.get_text()))
         relative_url = title_tag.get("href", "")
-        product_url = build_absolute_url(self.base_url + "/catalogue/", relative_url)
+        product_url = build_absolute_url(current_url, relative_url)
+        
+        # Validation for accidental duplicates from malformed relatives
+        if "catalogue/catalogue" in product_url:
+            product_url = product_url.replace("catalogue/catalogue", "catalogue")
 
         # Price
         price_tag = article.select_one("p.price_color")
@@ -157,7 +164,9 @@ class Parser:
         img_tag = article.select_one("div.image_container img")
         image_url = ""
         if img_tag and img_tag.get("src"):
-            image_url = build_absolute_url(self.base_url + "/", img_tag["src"])
+            image_url = build_absolute_url(current_url, img_tag["src"])
+            if "catalogue/catalogue" in image_url:
+                image_url = image_url.replace("catalogue/catalogue", "catalogue")
 
         return {
             "title": title,

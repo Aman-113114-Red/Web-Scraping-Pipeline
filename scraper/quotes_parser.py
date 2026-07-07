@@ -53,7 +53,7 @@ class Parser:
             return build_absolute_url(self.base_url, next_btn["href"])
         return None
 
-    def parse_listing(self, soup: BeautifulSoup) -> List[Dict[str, Any]]:
+    def parse_listing(self, soup: BeautifulSoup, current_url: str) -> List[Dict[str, Any]]:
         """
         Parse a single page and return a list of quote records.
 
@@ -61,6 +61,8 @@ class Parser:
         ----------
         soup : BeautifulSoup
             Parsed HTML of a quotes page.
+        current_url : str
+            URL of the current page.
 
         Returns
         -------
@@ -76,7 +78,7 @@ class Parser:
 
         for quote_div in quotes:
             try:
-                record = self._parse_quote(quote_div)
+                record = self._parse_quote(quote_div, current_url)
                 if record:
                     records.append(record)
             except Exception as exc:
@@ -88,7 +90,7 @@ class Parser:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
-    def _parse_quote(self, div: Tag) -> Optional[Dict[str, Any]]:
+    def _parse_quote(self, div: Tag, current_url: str) -> Optional[Dict[str, Any]]:
         """Parse a single ``<div class="quote">`` element."""
         # Quote text
         text_tag = div.select_one("span.text")
@@ -106,7 +108,7 @@ class Parser:
         author_link = div.select_one("a[href*='author']")
         author_url = ""
         if author_link and author_link.get("href"):
-            author_url = build_absolute_url(self.base_url, author_link["href"])
+            author_url = build_absolute_url(current_url, author_link["href"])
 
         # Tags
         tag_elements = div.select("div.tags a.tag")

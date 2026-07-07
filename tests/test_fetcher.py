@@ -73,3 +73,7 @@ def test_fetch_all_pages(fetcher):
     pages = fetcher.fetch_all_pages("http://test.com/page1", mock_next_page)
     
     assert len(pages) == 3
+    assert pages[0][0] == "http://test.com/page1"
+    assert pages[1][0] == "http://test.com/page2"
+    assert pages[2][0] == "http://test.com/page3"
+    assert "Page 1" in pages[0][1].text

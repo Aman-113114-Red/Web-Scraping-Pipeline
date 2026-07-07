@@ -755,3 +755,32 @@
 2026-07-05 19:16:36 | INFO     | api.app | Flask application created
 2026-07-05 19:17:32 | INFO     | api.routes | Loaded 1000 records from books_data.json on startup
 2026-07-05 19:17:32 | INFO     | api.app | Flask application created
+2026-07-07 11:36:15 | INFO     | api.routes | Loaded 1000 records from books_data.json on startup
+2026-07-07 11:36:15 | INFO     | api.app | Flask application created
+2026-07-07 11:36:15 | INFO     | api.app | Flask application created
+2026-07-07 11:36:15 | INFO     | api.app | Flask application created
+2026-07-07 11:36:16 | INFO     | api.app | Flask application created
+2026-07-07 11:36:16 | INFO     | api.app | Flask application created
+2026-07-07 11:36:16 | INFO     | api.app | Flask application created
+2026-07-07 11:36:16 | INFO     | api.app | Flask application created
+2026-07-07 11:36:16 | INFO     | api.app | Flask application created
+2026-07-07 11:36:16 | INFO     | scraper.cleaner | Cleaned 5 / 5 records
+2026-07-07 11:36:16 | INFO     | scraper.cleaner | Cleaned 6 / 6 records
+2026-07-07 11:36:16 | INFO     | scraper.cleaner | Cleaned 1 / 1 records
+2026-07-07 11:36:16 | INFO     | scraper.cleaner | Cleaned 1 / 1 records
+2026-07-07 11:36:16 | INFO     | scraper.deduplicator | Removed 1 duplicate(s) — 2 unique records remain
+2026-07-07 11:36:16 | INFO     | scraper.deduplicator | Removed 1 duplicate(s) — 2 unique records remain
+2026-07-07 11:36:16 | WARNING  | scraper.deduplicator | Deduplicator received an empty dataset
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Fetched successfully: http://test.com [200]
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-07 11:36:16 | WARNING  | utils.retry | Attempt 1/2 for fetch failed: Network Error — retrying in 0.0s
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Fetching: http://test.com
+2026-07-07 11:36:16 | ERROR    | utils.retry | All 2 attempts for fetch exhausted. Last error: Network Error
+2026-07-07 11:36:16 | ERROR    | scraper.fetcher | Failed to fetch http://test.com after retries: Network Error
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Page 1 fetched
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Page 2 fetched
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Page 3 fetched
+2026-07-07 11:36:16 | INFO     | scraper.fetcher | Pagination complete — 3 pages fetched (0 OK, 0 failed)
+2026-07-07 11:36:16 | INFO     | scraper.books_parser | Parsed 1 books from page
+2026-07-07 11:36:16 | INFO     | scraper.quotes_parser | Parsed 1 quotes from page
