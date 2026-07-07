@@ -5,15 +5,23 @@ REST API endpoints for the web scraping pipeline.
 
 Endpoints
 ---------
-  GET  /api/data         — Return scraped data (supports ``?search=`` query)
-  GET  /api/stats        — Return pipeline statistics
-  GET  /api/logs         — Return recent log entries
-  POST /api/scrape       — Trigger a scrape run
-  GET  /api/config       — Read current configuration
-  PUT  /api/config       — Update configuration
-  GET  /api/export/csv   — Download CSV file
-  GET  /api/export/json  — Download JSON file
-  GET  /api/parsers      — List available parsers with columns
+  GET  /api/data           — Return scraped data (supports ``?search=`` query)
+  GET  /api/stats          — Return pipeline statistics
+  GET  /api/logs           — Return recent log entries
+  POST /api/scrape         — Trigger a scrape run
+  GET  /api/scrape/status  — Return current scraping status
+  GET  /api/config         — Read current configuration
+  PUT  /api/config         — Update configuration
+  GET  /api/export/csv     — Download CSV file
+  GET  /api/export/json    — Download JSON file
+  GET  /api/parsers        — List available parsers with columns
+
+Response Format
+---------------
+All JSON endpoints return a consistent envelope:
+
+  Success — ``{"success": true,  "data": ...}``
+  Failure — ``{"success": false, "error": "...", "details": ...}``
 """
 
 import time
@@ -58,10 +66,30 @@ _state: Dict[str, Any] = {
     "csv_path": None,
     "json_path": None,
     "is_running": False,
+    "scrape_error": None,
 }
 _lock = threading.Lock()
 
 
+# ---------------------------------------------------------------------------
+# Response Helpers — every endpoint uses these for a consistent envelope
+# ---------------------------------------------------------------------------
+def _success(payload: Any, status_code: int = 200):
+    """Return ``{"success": true, "data": <payload>}`` with the given HTTP status."""
+    return jsonify({"success": True, "data": payload}), status_code
+
+
+def _error(message: str, details: Any = None, status_code: int = 500):
+    """Return ``{"success": false, "error": "...", "details": ...}``."""
+    body: Dict[str, Any] = {"success": False, "error": message}
+    if details is not None:
+        body["details"] = details
+    return jsonify(body), status_code
+
+
+# ---------------------------------------------------------------------------
+# File helpers
+# ---------------------------------------------------------------------------
 def _get_latest_file(extension: str) -> Optional[Path]:
     """Find the most recently modified file with the given extension in the output folder."""
     if not Settings.OUTPUT_FOLDER.exists():
@@ -79,7 +107,23 @@ def _load_state_from_files() -> None:
     This ensures Data Explorer, Analytics, and Stats display data
     immediately after a server restart or Vercel cold start, without
     requiring a fresh scrape run.
+
+    Guards
+    ------
+    - Skips loading if a scrape is currently in progress (prevents
+      overwriting partially-updated in-memory data).
+    - Skips loading if _state already holds fresh data from a
+      completed scrape (prevents stale file data from overwriting
+      a successful in-memory result on the same instance).
     """
+    # Don't interfere while a scrape is in progress
+    if _state["is_running"]:
+        return
+
+    # Don't overwrite fresh in-memory data from a completed scrape
+    if _state["data"] and _state["stats"]["status"] == "completed":
+        return
+
     latest_json = _get_latest_file(".json")
     if not latest_json:
         return
@@ -144,6 +188,7 @@ def _run_scraper(parser_name: Optional[str] = None, base_url: Optional[str] = No
     with _lock:
         _state["is_running"] = True
         _state["stats"]["status"] = "running"
+        _state["scrape_error"] = None
 
     try:
         # 1. Load parser
@@ -195,6 +240,7 @@ def _run_scraper(parser_name: Optional[str] = None, base_url: Optional[str] = No
             _state["columns"] = columns
             _state["csv_path"] = str(csv_path)
             _state["json_path"] = str(json_path)
+            _state["scrape_error"] = None
             _state["stats"] = {
                 "records_scraped": len(final_data),
                 "pages_crawled": len(pages),
@@ -217,10 +263,11 @@ def _run_scraper(parser_name: Optional[str] = None, base_url: Optional[str] = No
     except Exception as exc:
         elapsed = round(time.time() - start_time, 2)
         with _lock:
-            _state["stats"]["status"] = f"error: {str(exc)}"
+            _state["stats"]["status"] = "failed"
             _state["stats"]["execution_time"] = elapsed
             _state["stats"]["last_run"] = timestamp_now()
             _state["is_running"] = False
+            _state["scrape_error"] = str(exc)
         logger.error("Scrape failed: %s", exc)
         raise
 
@@ -249,8 +296,8 @@ def get_data():
             )
         ]
 
-    return jsonify({
-        "data": data,
+    return _success({
+        "records": data,
         "columns": columns,
         "total": len(data),
         "parser": Settings.ACTIVE_PARSER,
@@ -264,7 +311,7 @@ def get_stats():
     if _state["stats"]["records_scraped"] == 0:
         _load_state_from_files()
 
-    return jsonify(_state["stats"])
+    return _success(_state["stats"])
 
 
 @api_bp.route("/logs", methods=["GET"])
@@ -297,7 +344,7 @@ def get_logs():
             except Exception:
                 pass
 
-    return jsonify({
+    return _success({
         "logs": logs[-limit:],
         "total": len(logs),
     })
@@ -312,7 +359,7 @@ def trigger_scrape():
     ``{"parser": "books", "base_url": "https://..."}``
     """
     if _state["is_running"]:
-        return jsonify({"error": "A scrape is already running"}), 409
+        return _error("A scrape is already running", status_code=409)
 
     body = request.get_json(silent=True) or {}
     parser_name = body.get("parser", Settings.ACTIVE_PARSER)
@@ -320,18 +367,29 @@ def trigger_scrape():
 
     try:
         stats = _run_scraper(parser_name, base_url)
-        return jsonify({
+        return _success({
             "message": "Scrape completed successfully",
             "stats": stats,
+            "status": "completed",
         })
     except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+        return _error(str(exc))
+
+
+@api_bp.route("/scrape/status", methods=["GET"])
+def get_scrape_status():
+    """Return the current scraping status (lightweight status check)."""
+    return _success({
+        "status": _state["stats"]["status"],
+        "is_running": _state["is_running"],
+        "error": _state.get("scrape_error"),
+    })
 
 
 @api_bp.route("/config", methods=["GET"])
 def get_config():
     """Return current configuration."""
-    return jsonify(Settings.to_dict())
+    return _success(Settings.to_dict())
 
 
 @api_bp.route("/config", methods=["PUT"])
@@ -343,17 +401,17 @@ def update_config():
     """
     body = request.get_json(silent=True)
     if not body:
-        return jsonify({"error": "No configuration provided"}), 400
+        return _error("No configuration provided", status_code=400)
 
     try:
         Settings.update_runtime(**body)
         logger.info("Configuration updated: %s", list(body.keys()))
-        return jsonify({
+        return _success({
             "message": "Configuration updated",
             "config": Settings.to_dict(),
         })
     except Exception as exc:
-        return jsonify({"error": str(exc)}), 500
+        return _error(str(exc))
 
 
 @api_bp.route("/export/csv", methods=["GET"])
@@ -366,7 +424,7 @@ def export_csv_endpoint():
             csv_path = str(latest_csv)
             
     if not csv_path or not Path(csv_path).exists():
-        return jsonify({"error": "No CSV file available. Run a scrape first."}), 404
+        return _error("No CSV file available. Run a scrape first.", status_code=404)
     return send_file(csv_path, as_attachment=True, mimetype="text/csv")
 
 
@@ -380,7 +438,7 @@ def export_json_endpoint():
             json_path = str(latest_json)
 
     if not json_path or not Path(json_path).exists():
-        return jsonify({"error": "No JSON file available. Run a scrape first."}), 404
+        return _error("No JSON file available. Run a scrape first.", status_code=404)
     return send_file(json_path, as_attachment=True, mimetype="application/json")
 
 
@@ -388,7 +446,7 @@ def export_json_endpoint():
 def list_parsers():
     """List all available parsers with their metadata and columns."""
     parsers = get_available_parsers()
-    return jsonify({
+    return _success({
         "parsers": parsers,
         "active": Settings.ACTIVE_PARSER,
     })

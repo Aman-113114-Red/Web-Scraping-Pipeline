@@ -41,6 +41,8 @@
         searchQuery: "",
         charts: {},
         activeParser: "books",
+        isRunning: false,
+        lastStats: {},
     };
 
     // =====================================================================
@@ -132,18 +134,43 @@
     // =====================================================================
     // API Helpers
     // =====================================================================
-    async function apiFetch(url, options = {}) {
-        try {
-            const res = await fetch(url, options);
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.error || `HTTP ${res.status}`);
+    async function apiFetch(url, options = {}, maxRetries = 3) {
+        let lastError;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                const res = await fetch(url, options);
+                const body = await res.json().catch(() => ({}));
+
+                if (!res.ok) {
+                    const error = new Error(body.error || `HTTP ${res.status}`);
+                    error.status = res.status;
+                    error.details = body.details || null;
+                    // Don't retry 4xx client errors (bad request, not found, conflict, etc.)
+                    if (res.status >= 400 && res.status < 500) throw error;
+                    // 5xx server errors are retryable
+                    lastError = error;
+                } else if (body.success === false) {
+                    // API-level error returned with a 2xx status (defensive)
+                    const error = new Error(body.error || "Unknown API error");
+                    throw error;
+                } else {
+                    // Unwrap the consistent envelope: return body.data
+                    return body.data !== undefined ? body.data : body;
+                }
+            } catch (err) {
+                // If it's a non-retryable 4xx error, propagate immediately
+                if (err.status && err.status >= 400 && err.status < 500) throw err;
+                lastError = err;
             }
-            return await res.json();
-        } catch (err) {
-            console.error(`API error [${url}]:`, err);
-            throw err;
+            // Exponential backoff before next retry: 1s, 2s, 4s
+            if (attempt < maxRetries) {
+                const delay = Math.pow(2, attempt) * 1000;
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                console.warn(`Retrying ${url} (attempt ${attempt + 2}/${maxRetries + 1})…`);
+            }
         }
+        console.error(`API failed [${url}]: all ${maxRetries + 1} attempts exhausted`, lastError);
+        throw lastError;
     }
 
     // =====================================================================
@@ -203,16 +230,19 @@
     async function loadStats() {
         try {
             const stats = await apiFetch(API.STATS);
-            dom.valRecords.textContent = stats.records_scraped.toLocaleString();
-            dom.valPages.textContent = stats.pages_crawled.toLocaleString();
-            dom.valTime.textContent = `${stats.execution_time}s`;
-            dom.valDuplicates.textContent = stats.duplicates_removed.toLocaleString();
+            // Store for charts to reference without an extra API call
+            state.lastStats = stats;
 
-            // Status badge
+            dom.valRecords.textContent = (stats.records_scraped || 0).toLocaleString();
+            dom.valPages.textContent = (stats.pages_crawled || 0).toLocaleString();
+            dom.valTime.textContent = `${stats.execution_time || 0}s`;
+            dom.valDuplicates.textContent = (stats.duplicates_removed || 0).toLocaleString();
+
+            // Status badge — normalized values: idle | running | completed | failed
             const statusText = stats.status || "idle";
-            dom.valStatus.textContent = capitalize(statusText.split(":")[0]);
+            dom.valStatus.textContent = capitalize(statusText);
             dom.valStatus.className = "stat-value status-badge";
-            if (statusText.startsWith("error")) {
+            if (statusText === "failed") {
                 dom.valStatus.classList.add("error");
             } else {
                 dom.valStatus.classList.add(statusText);
@@ -225,8 +255,8 @@
             } else {
                 dom.valLastRun.textContent = "Never";
             }
-        } catch {
-            // Silent on stats load failure
+        } catch (err) {
+            showToast("Failed to load statistics", "error");
         }
     }
 
@@ -238,15 +268,18 @@
             const params = state.searchQuery ? `?search=${encodeURIComponent(state.searchQuery)}` : "";
             const res = await apiFetch(`${API.DATA}${params}`);
 
-            state.data = res.data || [];
+            // Backend now returns "records" instead of "data" to avoid
+            // collision with the response envelope's "data" key.
+            state.data = res.records || [];
             state.columns = res.columns || [];
             state.currentPage = 1;
             state.totalPages = Math.max(1, Math.ceil(state.data.length / ROWS_PER_PAGE));
 
             renderTable();
-            updateCharts();
-        } catch {
-            // Silent on data load failure
+            // Charts are updated separately after loadData() completes
+            // to avoid a hidden race condition with loadStats().
+        } catch (err) {
+            showToast("Failed to load data", "error");
         }
     }
 
@@ -573,42 +606,40 @@
         });
     }
 
-    async function updateRequestsChart(colors) {
+    function updateRequestsChart(colors) {
         const canvas = document.getElementById("chartRequests");
         const ctx = canvas.getContext("2d");
 
         if (state.charts.requests) state.charts.requests.destroy();
 
-        try {
-            const stats = await apiFetch(API.STATS);
-            const success = stats.successful_requests || 0;
-            const failed = stats.failed_requests || 0;
+        // Read from state.lastStats (populated by loadStats) instead of
+        // making a separate API call — eliminates a hidden race condition.
+        const stats = state.lastStats || {};
+        const success = stats.successful_requests || 0;
+        const failed = stats.failed_requests || 0;
 
-            state.charts.requests = new Chart(ctx, {
-                type: "doughnut",
-                data: {
-                    labels: ["Successful", "Failed"],
-                    datasets: [{
-                        data: [success, failed],
-                        backgroundColor: [colors.greenAlpha, "rgba(239,68,68,0.4)"],
-                        borderColor: [colors.green, colors.red],
-                        borderWidth: 2,
-                    }],
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: "bottom",
-                            labels: { color: colors.text, padding: 12, usePointStyle: true, font: { size: 11 } },
-                        },
+        state.charts.requests = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Successful", "Failed"],
+                datasets: [{
+                    data: [success, failed],
+                    backgroundColor: [colors.greenAlpha, "rgba(239,68,68,0.4)"],
+                    borderColor: [colors.green, colors.red],
+                    borderWidth: 2,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: { color: colors.text, padding: 12, usePointStyle: true, font: { size: 11 } },
                     },
                 },
-            });
-        } catch {
-            // Ignore
-        }
+            },
+        });
     }
 
     function chartOptions(colors, title) {
@@ -661,8 +692,8 @@
             `).join("");
 
             dom.logsContainer.scrollTop = dom.logsContainer.scrollHeight;
-        } catch {
-            // Ignore
+        } catch (err) {
+            showToast("Failed to load logs", "error");
         }
     }
 
@@ -678,8 +709,8 @@
             dom.settingRetries.value = config.max_retries || 3;
             dom.settingUserAgent.value = config.user_agent || "";
             dom.settingDelay.value = config.request_delay || 1;
-        } catch {
-            // Ignore
+        } catch (err) {
+            showToast("Failed to load settings", "error");
         }
     }
 
@@ -713,25 +744,42 @@
     // Scraper
     // =====================================================================
     async function runScraper() {
+        // Guard: prevent overlapping scrape requests
+        if (state.isRunning) return;
+
+        state.isRunning = true;
+        dom.runScraper.disabled = true;
+        dom.runScraper.classList.add("disabled");
         showLoading();
         showToast("Scraping started…", "info");
 
         try {
+            // No retries for the scrape POST — avoids triggering duplicate runs
+            // if the response is lost after the scrape already completed.
             const res = await apiFetch(API.SCRAPE, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     parser: state.activeParser,
                 }),
-            });
+            }, 0);
 
             showToast(`Scraping complete! ${res.stats.records_scraped} records scraped.`, "success");
 
-            // Refresh everything
-            await Promise.all([loadStats(), loadData(), loadLogs()]);
+            // Sequential refresh: Overview → Data Explorer → Analytics → Logs
+            // Each section waits for the previous one to finish before requesting.
+            // This ensures all sections read from the same completed _state and
+            // prevents the race condition that caused intermittent blank sections.
+            await loadStats();
+            await loadData();
+            updateCharts();
+            await loadLogs();
         } catch (err) {
             showToast(`Scraping failed: ${err.message}`, "error");
         } finally {
+            state.isRunning = false;
+            dom.runScraper.disabled = false;
+            dom.runScraper.classList.remove("disabled");
             hideLoading();
         }
     }
@@ -764,8 +812,8 @@
             });
 
             state.activeParser = active;
-        } catch {
-            // Use defaults
+        } catch (err) {
+            showToast("Failed to load parsers", "error");
         }
     }
 
@@ -805,10 +853,13 @@
 
         // Initial data load
         loadParsers();
-        loadStats();
-        loadData();
-        loadLogs();
         loadSettings();
+        // Load stats and data in parallel, then render charts once both are ready.
+        // This ensures updateCharts() has access to both state.data and state.lastStats.
+        Promise.all([loadStats(), loadData()])
+            .then(() => updateCharts())
+            .catch(() => {}); // Individual errors already handled with toasts
+        loadLogs();
     }
 
     // Start when DOM is ready
